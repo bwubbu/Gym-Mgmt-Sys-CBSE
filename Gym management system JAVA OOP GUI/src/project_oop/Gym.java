@@ -326,6 +326,60 @@ class Gym implements Serializable{
         return allBookingsString;
     }
 
+    // Get member-specific bookings
+    public String getMemberBookings(int memberRegId){
+        String memberBookings = "";
+        boolean hasBookings = false;
+        for(Machine m : machines){
+            Member[] bookings = m.getBookings();
+            for(int i = 0; i < bookings.length; i++){
+                if(bookings[i] != null && bookings[i].regId == memberRegId){
+                    memberBookings += "Machine: " + m.getName() + " (ID: " + m.getRegId() + ")\n";
+                    memberBookings += "Type: " + m.getType() + "\n";
+                    memberBookings += "Brand: " + m.getBrand() + "\n";
+                    memberBookings += "Slot: " + (i + 1) + "/8\n";
+                    memberBookings += "-----------------------------------\n";
+                    hasBookings = true;
+                }
+            }
+        }
+        if(!hasBookings){
+            return "No active bookings found.";
+        }
+        return memberBookings;
+    }
+
+    // Get member payment history/receipt
+    public String getMemberPaymentHistory(int memberRegId){
+        if(!memberExist(memberRegId)){
+            return "Member not found.";
+        }
+        Member member = memberData(memberRegId);
+        Payment payment = member.getPayment();
+        
+        String receipt = "==========================================\n";
+        receipt += "         PAYMENT RECEIPT\n";
+        receipt += "==========================================\n";
+        receipt += "Member Name: " + member.name + "\n";
+        receipt += "Member ID: " + member.regId + "\n";
+        receipt += "Phone: " + member.phoneNum + "\n";
+        receipt += "Email: " + member.gmail + "\n";
+        receipt += "------------------------------------------\n";
+        receipt += "Payment Status: " + payment.checkStatus() + "\n";
+        receipt += "Outstanding Balance: $" + String.format("%.2f", payment.getOutstandingBalance()) + "\n";
+        if(payment.getCreditCardAccounHolder() != null && !payment.getCreditCardAccounHolder().isEmpty()){
+            receipt += "Card Holder: " + payment.getCreditCardAccounHolder() + "\n";
+            if(payment.getCreditCardNum() != null && !payment.getCreditCardNum().isEmpty()){
+                String cardNum = payment.getCreditCardNum();
+                if(cardNum.length() >= 4){
+                    receipt += "Card: ****-****-****-" + cardNum.substring(cardNum.length() - 4) + "\n";
+                }
+            }
+        }
+        receipt += "==========================================\n";
+        return receipt;
+    }
+
 
 
     public int generateAutoRedIdForMember(){
@@ -362,8 +416,8 @@ class Gym implements Serializable{
         }
     }
     public static void main(String[] args) {
-        JFrameAdmin admin = new JFrameAdmin();
-        admin.setVisible(true);
+        LoginFrame login = new LoginFrame();
+        login.setVisible(true);
     }
 }
 
