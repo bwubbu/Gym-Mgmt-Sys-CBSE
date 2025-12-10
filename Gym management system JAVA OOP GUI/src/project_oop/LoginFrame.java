@@ -23,6 +23,7 @@ public class LoginFrame extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         txtPassword = new javax.swing.JPasswordField();
         btnLogin = new javax.swing.JButton();
+        btnChangeCredentials = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         cmbRole = new javax.swing.JComboBox<>();
 
@@ -72,11 +73,22 @@ public class LoginFrame extends javax.swing.JFrame {
             }
         });
 
+        btnChangeCredentials.setBackground(new java.awt.Color(17, 122, 102));
+        btnChangeCredentials.setFont(new java.awt.Font("Tahoma", 1, 14));
+        btnChangeCredentials.setForeground(new java.awt.Color(255, 255, 255));
+        btnChangeCredentials.setText("Change Credentials");
+        btnChangeCredentials.setBorder(null);
+        btnChangeCredentials.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChangeCredentialsActionPerformed(evt);
+            }
+        });
+
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18));
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Role");
 
-        cmbRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "Member" }));
+        cmbRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "Member", "Trainer" }));
         cmbRole.setBackground(new java.awt.Color(35, 43, 42));
         cmbRole.setFont(new java.awt.Font("Tahoma", 1, 14));
         cmbRole.setForeground(new java.awt.Color(255, 255, 255));
@@ -87,7 +99,9 @@ public class LoginFrame extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnChangeCredentials, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                    .addComponent(btnLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
                 .addGap(103, 103, 103))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
@@ -119,7 +133,9 @@ public class LoginFrame extends javax.swing.JFrame {
                     .addComponent(cmbRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(31, 31, 31)
                 .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(86, 86, 86))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnChangeCredentials, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(46, 46, 46))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -180,6 +196,30 @@ public class LoginFrame extends javax.swing.JFrame {
                     txtPassword.setText("");
                     txtUserName.setText("");
                 }
+            } else if (role.equals("Trainer")) {
+                // Trainer login: Username = TrainerID, Password = PhoneNum
+                if (gym.checkNumberIsInt(userName)) {
+                    int trainerId = Integer.parseInt(userName);
+                    if (gym.trainerExist(trainerId)) {
+                        Trainer trainer = gym.trainerData(trainerId);
+                        if (trainer.phoneNum != null && trainer.phoneNum.equals(password)) {
+                            dispose();
+                            JFrameMainMenu menu = new JFrameMainMenu();
+                            menu.setVisible(true);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Invalid password. Please enter your phone number.");
+                            txtPassword.setText("");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Trainer not found with ID: " + userName);
+                        txtPassword.setText("");
+                        txtUserName.setText("");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Trainer ID should be a number.");
+                    txtPassword.setText("");
+                    txtUserName.setText("");
+                }
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error during login: " + e.getMessage());
@@ -192,6 +232,18 @@ public class LoginFrame extends javax.swing.JFrame {
 
     private void txtUserNameActionPerformed(java.awt.event.ActionEvent evt) {
         
+    }
+
+    private void btnChangeCredentialsActionPerformed(java.awt.event.ActionEvent evt) {
+        // Only Admin can change credentials
+        String role = (String) cmbRole.getSelectedItem();
+        if (role != null && role.equals("Admin")) {
+            dispose();
+            JFrameChangeCretendials changeCred = new JFrameChangeCretendials();
+            changeCred.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Only Admin can change credentials. Please select Admin role.");
+        }
     }
 
     public static void main(String args[]) {
@@ -219,6 +271,7 @@ public class LoginFrame extends javax.swing.JFrame {
         });
     }
 
+    private javax.swing.JButton btnChangeCredentials;
     private javax.swing.JButton btnLogin;
     private javax.swing.JComboBox<String> cmbRole;
     private javax.swing.JLabel jLabel1;

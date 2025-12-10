@@ -603,7 +603,7 @@ public class JFrameAddMember extends javax.swing.JFrame {
     }//GEN-LAST:event_txtWeightActionPerformed
 
     private void txtRegNoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRegNoActionPerformed
-        int regId = gym.generateAutoRedIdForTrainer();
+        int regId = gym.generateAutoRedIdForMember();
         txtRegNo.setText(String.valueOf(regId));
     }//GEN-LAST:event_txtRegNoActionPerformed
 

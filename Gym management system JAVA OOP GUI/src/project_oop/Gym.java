@@ -5,6 +5,7 @@ class Gym implements Serializable{
     private ArrayList<Member> members = new ArrayList<Member>();
     private ArrayList<Trainer> trainers = new ArrayList<Trainer>();
     private ArrayList<Machine> machines = new ArrayList<Machine>();
+    private ArrayList<MemberPlan> plans = new ArrayList<MemberPlan>();
     private Admin admin;
     Gym() {
         admin = null;
@@ -12,6 +13,7 @@ class Gym implements Serializable{
             loadMemberFile();
             loadTrainerFile();
             loadMachineFile();
+            loadPlanFile();
         }catch(IOException e){
             
         }
@@ -26,6 +28,7 @@ class Gym implements Serializable{
             loadMemberFile();
             loadTrainerFile();
             loadMachineFile();
+            loadPlanFile();
         }catch(IOException e){
             
         }
@@ -48,6 +51,12 @@ class Gym implements Serializable{
     }
     public ArrayList<Machine> getMachines() {
         return machines;
+    }
+    public void setPlans(ArrayList<MemberPlan> plans) {
+        this.plans = plans;
+    }
+    public ArrayList<MemberPlan> getPlans() {
+        return plans;
     }
     public void setAdmin(Admin admin) {
         this.admin = admin;
@@ -415,6 +424,121 @@ class Gym implements Serializable{
         return autoRegId;
         }
     }
+
+    //Adding Plan
+    public void addPlan(MemberPlan p){
+        plans.add(p);
+        savePlanFile();
+    }
+
+    //Search Plan
+    public String searchPlan(int planId){
+        for(MemberPlan plan: plans){
+            if(plan.getPlanId() == planId){
+                return plan.toString();
+            }
+        }
+        return "Plan with ID " + planId + " was not found, please enter correct plan ID";
+    }
+
+    //Search Plan by Name
+    public String searchPlanByName(String planName){
+        for(MemberPlan plan: plans){
+            if(plan.getPlanName() != null && plan.getPlanName().equalsIgnoreCase(planName)){
+                return plan.toString();
+            }
+        }
+        return "Plan with name \"" + planName + "\" was not found, please enter correct plan name";
+    }
+
+    //View all Plans
+    public String viewAllPlans(){
+        String allPlans = "";
+        for(MemberPlan p: plans){
+            allPlans += "Plan Name : " + p.getPlanName() + "  >>>  Plan ID : " + p.getPlanId() + "\n";
+        }
+        return allPlans;
+    }
+
+    //Delete Plan
+    public String deletePlan(int planId){
+        for(MemberPlan plan: plans){
+            if(planId == plan.getPlanId()){
+                int index = plans.indexOf(plan);
+                plans.remove(index);
+                savePlanFile();
+                return "Plan Data Removed";
+            }
+        }
+        return "Plan with ID " + planId + " was not found in gym.";
+    }
+
+    public boolean planExist(int planId){
+        for(MemberPlan plan: plans){
+            if(plan.getPlanId() == planId){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public MemberPlan planData(int planId){
+        MemberPlan p = new MemberPlan();
+        for(MemberPlan plan: plans){
+            if(plan.getPlanId() == planId){
+                p = plan;
+            }
+        }
+        return p;
+    }
+
+    public void modifyPlan(MemberPlan p, int planId){
+        for(MemberPlan plan: plans){
+            if(plan.getPlanId() == planId){
+                int index = plans.indexOf(plan);
+                plans.set(index, p);
+            }
+        }
+        savePlanFile();
+    }
+
+    private void loadPlanFile() throws IOException{
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("PlanFile"));
+            while (true) {
+                MemberPlan plan = (MemberPlan) objectInputStream.readObject();
+                plans.add(plan);
+            }
+        } catch (EOFException ex) {
+            System.out.println("End of file reached.");
+        } catch (ClassNotFoundException | IOException ex) {
+        }
+    }
+
+    public void savePlanFile() {
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("PlanFile"));
+            for (MemberPlan p : plans) {
+                objectOutputStream.writeObject(p);
+            }
+            objectOutputStream.close();
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+        }
+    }
+
+    public int generateAutoRegIdForPlan(){
+        while(true){
+            int autoRegId = (int)(1000 + Math.random() * 1100);
+            for (MemberPlan p : plans){
+                if(p.getPlanId() == autoRegId){
+                    continue;
+                }
+            }
+            return autoRegId;
+        }
+    }
+
     public static void main(String[] args) {
         LoginFrame login = new LoginFrame();
         login.setVisible(true);
