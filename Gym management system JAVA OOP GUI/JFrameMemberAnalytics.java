@@ -3,13 +3,13 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.time.LocalDate;
-public class JFrameGenerateReport extends javax.swing.JFrame {
+public class JFrameMemberAnalytics extends javax.swing.JFrame {
     Report report = new Report();
     private String generatedReport;
     private String currentReportType = "";
-    public JFrameGenerateReport() {
+    public JFrameMemberAnalytics() {
         initComponents();
-        txtReportGenerated.setEditable(false);
+        txtAnalyticsReport.setEditable(false);
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -18,61 +18,46 @@ public class JFrameGenerateReport extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         iLabel1 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         txtMenuOption = new javax.swing.JTextField();
-        btnEnter = new javax.swing.JButton();
+        btnAnalyze = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        txtReportGenerated = new javax.swing.JTextArea();
+        txtAnalyticsReport = new javax.swing.JTextArea();
         btnBack = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(35, 43, 42));
 
         iLabel1.setFont(new java.awt.Font("Tahoma", 1, 22)); // NOI18N
         iLabel1.setForeground(new java.awt.Color(255, 255, 255));
         iLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        iLabel1.setText("Generate Report");
+        iLabel1.setText("Member Analytics");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("2. Generate trainer report ");
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("1. Generate full report ");
+        jLabel1.setText("1. View member demographics");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("3. Generate member report ");
+        jLabel2.setText("2. Analyze growth trends");
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("4. Generate machine report ");
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("3. View body statistics analysis");
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setText("5. Generate booking report ");
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("4. View fitness goal distribution");
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("6. Generate outstanding balance report");
-
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("7. Generate zero(0) outStanding balance report");
-
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Choose Option:");
+        jLabel5.setText("Choose Option:");
 
         txtMenuOption.setBackground(new java.awt.Color(35, 43, 42));
         txtMenuOption.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
@@ -85,23 +70,23 @@ public class JFrameGenerateReport extends javax.swing.JFrame {
             }
         });
 
-        btnEnter.setBackground(new java.awt.Color(17, 122, 102));
-        btnEnter.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        btnEnter.setForeground(new java.awt.Color(255, 255, 255));
-        btnEnter.setText("Enter");
-        btnEnter.setBorder(null);
-        btnEnter.addActionListener(new java.awt.event.ActionListener() {
+        btnAnalyze.setBackground(new java.awt.Color(17, 122, 102));
+        btnAnalyze.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnAnalyze.setForeground(new java.awt.Color(255, 255, 255));
+        btnAnalyze.setText("Analyze");
+        btnAnalyze.setBorder(null);
+        btnAnalyze.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEnterActionPerformed(evt);
+                btnAnalyzeActionPerformed(evt);
             }
         });
 
-        txtReportGenerated.setBackground(new java.awt.Color(35, 43, 42));
-        txtReportGenerated.setColumns(20);
-        txtReportGenerated.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtReportGenerated.setForeground(new java.awt.Color(255, 255, 255));
-        txtReportGenerated.setRows(5);
-        jScrollPane1.setViewportView(txtReportGenerated);
+        txtAnalyticsReport.setBackground(new java.awt.Color(35, 43, 42));
+        txtAnalyticsReport.setColumns(20);
+        txtAnalyticsReport.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAnalyticsReport.setForeground(new java.awt.Color(255, 255, 255));
+        txtAnalyticsReport.setRows(5);
+        jScrollPane1.setViewportView(txtAnalyticsReport);
 
         btnBack.setBackground(new java.awt.Color(17, 122, 102));
         btnBack.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -147,27 +132,20 @@ public class JFrameGenerateReport extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(43, 43, 43)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(34, 34, 34)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(jLabel5))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel6)
+                        .addComponent(jLabel5)
                         .addGap(18, 18, 18)
                         .addComponent(txtMenuOption, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(200, 200, 200))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(268, 268, 268)
-                .addComponent(btnEnter, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAnalyze, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(16, Short.MAX_VALUE)
@@ -189,25 +167,19 @@ public class JFrameGenerateReport extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(iLabel1)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel1))
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel8))
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel7))
+                .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5)
+                .addComponent(jLabel4)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtMenuOption, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(btnEnter, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAnalyze, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -242,73 +214,53 @@ public class JFrameGenerateReport extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMenuOptionActionPerformed
 
-    private void btnEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterActionPerformed
+    private void btnAnalyzeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalyzeActionPerformed
         String option = txtMenuOption.getText();
-        if (option.equals("1") || option.equals("2") || option.equals("3") || option.equals("4") || option.equals("5") || option.equals("6") || option.equals("7")){
+        if (option.equals("1") || option.equals("2") || option.equals("3") || option.equals("4")){
             switch(option){
                 case "1":
-                    generatedReport = report.generateFullReport();
-                    currentReportType = "FullReport";
-                    txtReportGenerated.setText(generatedReport);
-                    txtReportGenerated.setEditable(false);
+                    generatedReport = report.generateMemberDemographicsReport();
+                    currentReportType = "MemberDemographics";
+                    txtAnalyticsReport.setText(generatedReport);
+                    txtAnalyticsReport.setEditable(false);
                     break;
                 case "2":
-                    generatedReport = report.generateTrainerReport();
-                    currentReportType = "TrainerReport";
-                    txtReportGenerated.setText(generatedReport);
-                    txtReportGenerated.setEditable(false);
+                    generatedReport = report.generateGrowthTrendsReport();
+                    currentReportType = "GrowthTrends";
+                    txtAnalyticsReport.setText(generatedReport);
+                    txtAnalyticsReport.setEditable(false);
                     break;
-                  
                 case "3":
-                    generatedReport = report.generateMemberReport();
-                    currentReportType = "MemberReport";
-                    txtReportGenerated.setText(generatedReport);
-                    txtReportGenerated.setEditable(false);
+                    generatedReport = report.generateBodyStatisticsReport();
+                    currentReportType = "BodyStatistics";
+                    txtAnalyticsReport.setText(generatedReport);
+                    txtAnalyticsReport.setEditable(false);
                     break;
                 case "4":
-                    generatedReport = report.generateMachineReport();
-                    currentReportType = "MachineReport";
-                    txtReportGenerated.setText(generatedReport);
-                    txtReportGenerated.setEditable(false);
-                    break;
-                    
-                case "5":
-                    generatedReport = report.generateBookingReport();
-                    currentReportType = "BookingReport";
-                    txtReportGenerated.setText(generatedReport);
-                    txtReportGenerated.setEditable(false);
-                    break;
-                case "6":
-                    generatedReport = report.generateReportOfOutStandingBalance();
-                    currentReportType = "OutstandingBalanceReport";
-                    txtReportGenerated.setText(generatedReport);
-                    txtReportGenerated.setEditable(false);
-                    break;
-                case "7":
-                    generatedReport = report.generateReportOfZeroOutStandingBalance();
-                    currentReportType = "ZeroOutstandingBalanceReport";
-                    txtReportGenerated.setText(generatedReport);
-                    txtReportGenerated.setEditable(false);
+                    generatedReport = report.generateFitnessGoalDistributionReport();
+                    currentReportType = "FitnessGoalDistribution";
+                    txtAnalyticsReport.setText(generatedReport);
+                    txtAnalyticsReport.setEditable(false);
                     break;
             }
         } else{
             JOptionPane.showMessageDialog(null, "You enter wrong choice, enter again.");
         }
-    }//GEN-LAST:event_btnEnterActionPerformed
+    }//GEN-LAST:event_btnAnalyzeActionPerformed
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-            dispose();
-            JFrameMainMenu menu = new JFrameMainMenu();
-            menu.setVisible(true);
+        dispose();
+        JFrameAnalyticsMenu analyticsMenu = new JFrameAnalyticsMenu();
+        analyticsMenu.setVisible(true);
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        txtReportGenerated.setText("");
+        txtAnalyticsReport.setText("");
         currentReportType = "";
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        String reportContent = txtReportGenerated.getText().trim();
+        String reportContent = txtAnalyticsReport.getText().trim();
         
         // Check if report is empty
         if(reportContent.isEmpty()){
@@ -360,27 +312,25 @@ public class JFrameGenerateReport extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new JFrameGenerateReport().setVisible(true);
+                new JFrameMemberAnalytics().setVisible(true);
             }
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAnalyze;
     private javax.swing.JButton btnBack;
-    private javax.swing.JButton btnEnter;
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnReset;
     private javax.swing.JLabel iLabel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txtMenuOption;
-    private javax.swing.JTextArea txtReportGenerated;
+    private javax.swing.JTextArea txtAnalyticsReport;
     // End of variables declaration//GEN-END:variables
 }
+
