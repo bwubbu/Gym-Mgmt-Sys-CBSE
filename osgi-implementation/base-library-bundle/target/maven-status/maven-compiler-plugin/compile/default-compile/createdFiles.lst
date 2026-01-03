@@ -1,0 +1,13 @@
+com\gymmanagement\osgi\base\entity\Payment.class
+com\gymmanagement\osgi\base\entity\Trainer.class
+com\gymmanagement\osgi\base\service\IMachineService.class
+com\gymmanagement\osgi\base\service\ITrainerService.class
+com\gymmanagement\osgi\base\service\IPaymentService.class
+com\gymmanagement\osgi\base\entity\GymMachine.class
+com\gymmanagement\osgi\base\entity\Admin.class
+com\gymmanagement\osgi\base\entity\Member.class
+com\gymmanagement\osgi\base\entity\Date.class
+com\gymmanagement\osgi\base\entity\Machine.class
+com\gymmanagement\osgi\base\service\IMemberService.class
+com\gymmanagement\osgi\base\service\IReportService.class
+com\gymmanagement\osgi\base\entity\Person.class

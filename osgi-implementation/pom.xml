@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.gymmanagement.osgi</groupId>
+    <artifactId>osgi-implementation</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>Gym Management OSGi Implementation</name>
+    <description>Parent POM for OSGi-based Gym Management System</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <osgi.core.version>6.0.0</osgi.core.version>
+        <felix.version>7.0.0</felix.version>
+    </properties>
+
+    <repositories>
+        <!-- OSGi Repository -->
+        <repository>
+            <id>osgi</id>
+            <name>OSGi Repository</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+    </repositories>
+
+    <modules>
+        <module>base-library-bundle</module>
+        <module>member-management-bundle</module>
+        <module>report-analytics-bundle</module>
+        <module>test-client-bundle</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <source>17</source>
+                        <target>17</target>
+                    </configuration>
+                </plugin>
+                
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>5.1.8</version>
+                    <extensions>true</extensions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
