@@ -98,6 +98,7 @@ class Report{
 		int maleCount = 0;
 		int femaleCount = 0;
 		int otherCount = 0;
+		int notSpecifiedCount = 0;
 		
 		for(Member m : members){
 			if(m.gender != null){
@@ -109,6 +110,8 @@ class Report{
 				} else {
 					otherCount++;
 				}
+			} else {
+				notSpecifiedCount++;
 			}
 		}
 		
@@ -118,9 +121,13 @@ class Report{
 		if(otherCount > 0){
 			reportDetails += "  Other: " + otherCount + " (" + String.format("%.1f", (otherCount * 100.0 / totalMembers)) + "%)\n";
 		}
+		if(notSpecifiedCount > 0){
+			reportDetails += "  Not Specified: " + notSpecifiedCount + " (" + String.format("%.1f", (notSpecifiedCount * 100.0 / totalMembers)) + "%)\n";
+		}
 		reportDetails += "\n";
 		
 		// Age group distribution
+		int ageUnder18 = 0;
 		int age18_25 = 0;
 		int age26_35 = 0;
 		int age36_45 = 0;
@@ -129,7 +136,9 @@ class Report{
 		
 		for(Member m : members){
 			int age = m.age;
-			if(age >= 18 && age <= 25){
+			if(age < 18){
+				ageUnder18++;
+			} else if(age >= 18 && age <= 25){
 				age18_25++;
 			} else if(age >= 26 && age <= 35){
 				age26_35++;
@@ -143,6 +152,9 @@ class Report{
 		}
 		
 		reportDetails += "Age Group Distribution:\n";
+		if(ageUnder18 > 0){
+			reportDetails += "  Under 18 years: " + ageUnder18 + " (" + String.format("%.1f", (ageUnder18 * 100.0 / totalMembers)) + "%)\n";
+		}
 		reportDetails += "  18-25 years: " + age18_25 + " (" + String.format("%.1f", (age18_25 * 100.0 / totalMembers)) + "%)\n";
 		reportDetails += "  26-35 years: " + age26_35 + " (" + String.format("%.1f", (age26_35 * 100.0 / totalMembers)) + "%)\n";
 		reportDetails += "  36-45 years: " + age36_45 + " (" + String.format("%.1f", (age36_45 * 100.0 / totalMembers)) + "%)\n";
@@ -328,7 +340,7 @@ class Report{
 		for(Map.Entry<String, Integer> entry : sortedGoals){
 			String goal = entry.getKey();
 			int count = entry.getValue();
-			double percentage = (count * 100.0) / totalMembers;
+			double percentage = (count * 100.0) / totalWithGoals;
 			reportDetails += "  " + goal + ": " + count + " members (" + 
 							String.format("%.1f", percentage) + "%)\n";
 		}
