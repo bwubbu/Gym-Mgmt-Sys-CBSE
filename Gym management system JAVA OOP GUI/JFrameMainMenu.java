@@ -29,6 +29,7 @@ public class JFrameMainMenu extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         iLabel1 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
@@ -108,6 +109,10 @@ public class JFrameMainMenu extends javax.swing.JFrame {
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("1. Accounts");
 
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("7. Analytics");
+
         btnLogout.setBackground(new java.awt.Color(17, 122, 102));
         btnLogout.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnLogout.setForeground(new java.awt.Color(255, 255, 255));
@@ -140,7 +145,8 @@ public class JFrameMainMenu extends javax.swing.JFrame {
                                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 0, Short.MAX_VALUE)))
+                                    .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGap(12, 12, 12)))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGap(3, 3, 3)
@@ -175,6 +181,8 @@ public class JFrameMainMenu extends javax.swing.JFrame {
                     .addComponent(jLabel8)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtMenuOption, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -205,7 +213,7 @@ public class JFrameMainMenu extends javax.swing.JFrame {
 
     private void btnEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterActionPerformed
         String option = txtMenuOption.getText();
-            if (option.equals("1") || option.equals("2") || option.equals("3") || option.equals("4") || option.equals("6") || option.equals("5")){
+            if (option.equals("1") || option.equals("2") || option.equals("3") || option.equals("4") || option.equals("6") || option.equals("5") || option.equals("7")){
                 switch(option){
                     case "1":
                         dispose();
@@ -236,6 +244,11 @@ public class JFrameMainMenu extends javax.swing.JFrame {
                         dispose();
                         JFrameGenerateReport reportMenu = new JFrameGenerateReport();
                         reportMenu.setVisible(true);  
+                        break;
+                    case "7":
+                        dispose();
+                        JFrameAnalyticsMenu analyticsMenu = new JFrameAnalyticsMenu();
+                        analyticsMenu.setVisible(true);
                         break;
              }
            
@@ -298,6 +311,7 @@ public class JFrameMainMenu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel txtLogin;
