@@ -44,6 +44,11 @@ public class JFrameAccountMenu extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("3. Pay outstanding balance ");
 
+        jLabel6 = new javax.swing.JLabel();
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("4. Analyze payment analytics");
+
         btnEnter.setBackground(new java.awt.Color(17, 122, 102));
         btnEnter.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnEnter.setForeground(new java.awt.Color(255, 255, 255));
@@ -91,6 +96,7 @@ public class JFrameAccountMenu extends javax.swing.JFrame {
                             .addComponent(jLabel3)
                             .addComponent(jLabel2)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addComponent(btnBack)
@@ -114,6 +120,8 @@ public class JFrameAccountMenu extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -166,7 +174,12 @@ public class JFrameAccountMenu extends javax.swing.JFrame {
                         dispose();
                         JFramePayOutstandingBalance payBalance = new JFramePayOutstandingBalance();
                         payBalance.setVisible(true);
-                        break;  
+                        break;
+                    case "4":
+                        dispose();
+                        JFramePaymentAnalytics paymentAnalytics = new JFramePaymentAnalytics();
+                        paymentAnalytics.setVisible(true);
+                        break;
              }
          } else{
              JOptionPane.showMessageDialog(null, "You enter wrong choice, enter again.");
@@ -225,6 +238,7 @@ public class JFrameAccountMenu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField txtOption;
     // End of variables declaration//GEN-END:variables
