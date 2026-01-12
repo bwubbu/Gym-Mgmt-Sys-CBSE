@@ -348,6 +348,74 @@ class Report{
 		return reportDetails;
 	}
 	
+	// Payment Analytics Method (UC-16)
+	public String generatePaymentAnalyticsReport(){
+		LocalDate currentDate = LocalDate.now();
+		ArrayList<Member> members = gymDetails.getMembers();
+
+		String reportDetails = "\n Date : " + currentDate + "\n\n >>> Payment Analytics Report\n\n";
+
+		// Handle empty member list
+		if(members.isEmpty()){
+			reportDetails += "Payment Analytics Summary:\n";
+			reportDetails += "  Total Outstanding Balance: $0.0\n";
+			reportDetails += "  Average Outstanding Balance: $0.0\n";
+			reportDetails += "  Members with Outstanding Balance: 0\n";
+			reportDetails += "  Members with Zero Balance: 0\n";
+			reportDetails += "  Total Number of Members: 0\n\n";
+			reportDetails += "---------------------------------------------------------------\n";
+			reportDetails += String.format("%-20s %-15s %-20s %-15s\n", "Member Name", "Registration ID", "Outstanding Balance", "Payment Status");
+			reportDetails += "---------------------------------------------------------------\n";
+			return reportDetails;
+		}
+
+		// Calculate analytics
+		double totalOutstanding = 0.0;
+		int membersWithBalance = 0;
+		int membersWithZeroBalance = 0;
+		int totalMembers = members.size();
+
+		for(Member m : members){
+			double balance = m.getPayment().getOutstandingBalance();
+			totalOutstanding += balance;
+			if(m.getPayment().checkStatus().equals("UnPaid")){
+				membersWithBalance++;
+			} else {
+				membersWithZeroBalance++;
+			}
+		}
+
+		double averageOutstanding = totalMembers > 0 ? totalOutstanding / totalMembers : 0.0;
+
+		// Display summary
+		reportDetails += "Payment Analytics Summary:\n";
+		reportDetails += "  Total Outstanding Balance: $" + String.format("%.2f", totalOutstanding) + "\n";
+		reportDetails += "  Average Outstanding Balance: $" + String.format("%.2f", averageOutstanding) + "\n";
+		reportDetails += "  Members with Outstanding Balance: " + membersWithBalance + "\n";
+		reportDetails += "  Members with Zero Balance: " + membersWithZeroBalance + "\n";
+		reportDetails += "  Total Number of Members: " + totalMembers + "\n\n";
+
+		// Sort members by outstanding balance (descending)
+		ArrayList<Member> sortedMembers = new ArrayList<>(members);
+		sortedMembers.sort((a, b) -> Double.compare(b.getPayment().getOutstandingBalance(), a.getPayment().getOutstandingBalance()));
+
+		// Display member table
+		reportDetails += "---------------------------------------------------------------\n";
+		reportDetails += String.format("%-20s %-15s %-20s %-15s\n", "Member Name", "Registration ID", "Outstanding Balance", "Payment Status");
+		reportDetails += "---------------------------------------------------------------\n";
+
+		for(Member m : sortedMembers){
+			String name = m.name.length() > 18 ? m.name.substring(0, 18) + ".." : m.name;
+			reportDetails += String.format("%-20s %-15d $%-19.2f %-15s\n",
+				name,
+				m.regId,
+				m.getPayment().getOutstandingBalance(),
+				m.getPayment().checkStatus());
+		}
+
+		return reportDetails;
+	}
+
 	// Equipment Usage Analytics Method
 	public String generateEquipmentUsageAnalyticsReport(){
 		LocalDate currentDate = LocalDate.now();
