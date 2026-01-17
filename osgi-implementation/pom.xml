@@ -33,6 +33,7 @@
     <modules>
         <module>base-library-bundle</module>
         <module>member-management-bundle</module>
+        <module>trainer-management-bundle</module>
         <module>report-analytics-bundle</module>
         <module>test-client-bundle</module>
     </modules>

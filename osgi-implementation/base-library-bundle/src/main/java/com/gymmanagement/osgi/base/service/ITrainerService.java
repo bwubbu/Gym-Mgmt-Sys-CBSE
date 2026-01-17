@@ -47,5 +47,21 @@ public interface ITrainerService {
      * @return List of matching trainers
      */
     List<Trainer> searchTrainersByName(String name);
+
+    /**
+     * Assign a member to a trainer
+     * @param trainerId Trainer ID
+     * @param memberId Member ID
+     */
+    void assignMemberToTrainer(int trainerId, int memberId);
+
+    /**
+     * Update trainer performance metrics
+     * @param trainerId Trainer ID
+     * @param rating Rating (0-5)
+     * @param attended Whether attendance is marked
+     * @return Success message
+     */
+    String updatePerformance(int trainerId, double rating, boolean attended);
 }
 

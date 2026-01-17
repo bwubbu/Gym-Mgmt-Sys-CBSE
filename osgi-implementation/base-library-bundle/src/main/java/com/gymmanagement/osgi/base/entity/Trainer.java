@@ -11,6 +11,12 @@ public class Trainer extends Person implements Serializable {
     private double weeklyWorkingHours;
     private String experienceLevel;
     private static final long serialVersionUID = 2286502415981060413L;
+
+    // --- Performance Tracking Fields ---
+    private java.util.List<Integer> assignedMemberIds = new java.util.ArrayList<>();
+    private double totalRating;
+    private int ratingCount;
+    private int attendanceDays;
     
     public Trainer() {
         super();
@@ -60,6 +66,39 @@ public class Trainer extends Person implements Serializable {
     
     public String getExperienceLevel() {
         return experienceLevel;
+    }
+
+    public java.util.List<Integer> getAssignedMemberIds() {
+        return assignedMemberIds;
+    }
+
+    public double getTotalRating() {
+        return totalRating;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public int getAttendanceDays() {
+        return attendanceDays;
+    }
+
+    public void setTotalRating(double totalRating) {
+        this.totalRating = totalRating;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public void setAttendanceDays(int attendanceDays) {
+        this.attendanceDays = attendanceDays;
+    }
+
+    public double getAverageRating() {
+        if (ratingCount == 0) return 0.0;
+        return totalRating / ratingCount;
     }
     
     public double calculSalary() {
