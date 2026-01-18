@@ -3,6 +3,7 @@ package com.gymmanagement.base.service;
 import com.gymmanagement.base.entity.Member;
 import com.gymmanagement.base.entity.Machine;
 import com.gymmanagement.base.entity.Maintenance;
+import com.gymmanagement.base.dto.MachineUsageStats;
 import java.util.List;
 
 /**
@@ -37,4 +38,7 @@ public interface IBookingService {
     // Maintenance Operations
     String scheduleMaintenance(Maintenance maintenance);
     List<Maintenance> getMaintenanceByMachine(int machineId);
+
+    // Statistics
+    List<MachineUsageStats> getUsageStatistics();
 }

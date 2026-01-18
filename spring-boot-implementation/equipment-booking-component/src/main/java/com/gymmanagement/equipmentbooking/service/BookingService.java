@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
+import com.gymmanagement.base.dto.MachineUsageStats;
 
 @Service
 public class BookingService implements IBookingService {
@@ -199,5 +200,21 @@ public class BookingService implements IBookingService {
     @Override
     public List<Maintenance> getMaintenanceByMachine(int machineId) {
         return maintenanceRepository.findByMachineId(machineId);
+    }
+
+    @Override
+    public List<MachineUsageStats> getUsageStatistics() {
+        List<MachineUsageStats> stats = new ArrayList<>();
+        List<Machine> machines = machineRepository.findAll();
+        for (Machine m : machines) {
+            int booked = 0;
+            if (m.getBookings() != null) {
+                for (Member slot : m.getBookings()) {
+                    if (slot != null) booked++;
+                }
+            }
+            stats.add(new MachineUsageStats(m.getRegId(), m.getName(), m.getBookings() != null ? m.getBookings().length : 8, booked));
+        }
+        return stats;
     }
 }

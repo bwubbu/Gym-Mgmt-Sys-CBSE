@@ -2,6 +2,7 @@ package com.gymmanagement.equipmentbooking.controller;
 
 import com.gymmanagement.base.entity.Machine;
 import com.gymmanagement.base.service.IBookingService;
+import com.gymmanagement.base.dto.MachineUsageStats;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,11 @@ public class EquipmentController {
     @GetMapping
     public ResponseEntity<List<Machine>> getAllMachines() {
         return ResponseEntity.ok(bookingService.getAllMachines());
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<List<MachineUsageStats>> getUsageStats() {
+        return ResponseEntity.ok(bookingService.getUsageStatistics());
     }
 
     @GetMapping("/{id}")
