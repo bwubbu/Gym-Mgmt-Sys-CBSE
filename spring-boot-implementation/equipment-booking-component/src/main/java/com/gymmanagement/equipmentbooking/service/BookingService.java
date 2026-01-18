@@ -2,22 +2,29 @@ package com.gymmanagement.equipmentbooking.service;
 
 import com.gymmanagement.base.entity.Member;
 import com.gymmanagement.base.entity.Machine;
+import com.gymmanagement.base.entity.Maintenance;
 import com.gymmanagement.equipmentbooking.repository.FileMachineRepository;
+import com.gymmanagement.equipmentbooking.repository.FileMaintenanceRepository;
 import com.gymmanagement.base.service.IBookingService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
 
 @Service
 public class BookingService implements IBookingService {
 
     private final FileMachineRepository machineRepository;
+    private final FileMaintenanceRepository maintenanceRepository;
     private final DataService dataService;
 
-    public BookingService(FileMachineRepository machineRepository, DataService dataService) {
+    public BookingService(FileMachineRepository machineRepository, 
+                          FileMaintenanceRepository maintenanceRepository,
+                          DataService dataService) {
         this.machineRepository = machineRepository;
+        this.maintenanceRepository = maintenanceRepository;
         this.dataService = dataService;
     }
 
@@ -28,6 +35,12 @@ public class BookingService implements IBookingService {
         Machine machine = machineRepository.findById(machineRegId).orElse(null);
         if (machine == null) {
             return "Machine not found.";
+        }
+
+        // Check for active maintenance
+        List<Maintenance> activeMaintenance = maintenanceRepository.findActiveByMachineId(machineRegId, LocalDate.now());
+        if (!activeMaintenance.isEmpty()) {
+            return "Machine is currently under maintenance.";
         }
 
         Member member = dataService.getMember(memberRegId);
@@ -172,5 +185,19 @@ public class BookingService implements IBookingService {
             if (b == null) return true;
         }
         return false;
+    }
+
+    @Override
+    public String scheduleMaintenance(Maintenance maintenance) {
+        if (!machineRepository.existsById(maintenance.getMachineId())) {
+            return "Machine not found. Cannot schedule maintenance.";
+        }
+        maintenanceRepository.save(maintenance);
+        return "Maintenance scheduled successfully.";
+    }
+
+    @Override
+    public List<Maintenance> getMaintenanceByMachine(int machineId) {
+        return maintenanceRepository.findByMachineId(machineId);
     }
 }
