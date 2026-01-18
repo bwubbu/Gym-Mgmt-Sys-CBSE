@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-        http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -39,6 +38,12 @@
                     <instructions>
                         <Bundle-SymbolicName>com.gymmanagement.osgi.machine</Bundle-SymbolicName>
                         <Private-Package>com.gymmanagement.osgi.machine.internal</Private-Package>
+                        <Bundle-Version>1.0.0</Bundle-Version>
+                        <Bundle-Description>Machine management service for Gym Management System</Bundle-Description>
+                        <Import-Package>
+                            !org.osgi.service.component.annotations,
+                            *
+                        </Import-Package>
                         <Service-Component>OSGI-INF/*.xml</Service-Component>
                     </instructions>
                 </configuration>
