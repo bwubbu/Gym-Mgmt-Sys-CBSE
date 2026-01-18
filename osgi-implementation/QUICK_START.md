@@ -12,6 +12,7 @@ mvn clean install
 This will build:
 - `base-library-bundle/target/base-library-bundle-1.0.0.jar`
 - `member-management-bundle/target/member-management-bundle-1.0.0.jar`
+- `machine-management-bundle/target/machine-management-bundle-1.0.0.jar`
 
 ### 2. Download Apache Felix
 
@@ -26,6 +27,7 @@ This will build:
 # Copy built JARs to felix-framework/bundle/
 cp base-library-bundle/target/*.jar /path/to/felix-framework/bundle/
 cp member-management-bundle/target/*.jar /path/to/felix-framework/bundle/
+cp machine-management-bundle/target/*.jar /path/to/felix-framework/bundle/
 ```
 
 ### 4. Start Felix Framework
@@ -56,6 +58,13 @@ g! install file:/path/to/member-management-bundle-1.0.0.jar
 
 # Start member management bundle
 g! start 2
+
+# Install machine management bundle
+g! install file:/path/to/machine-management-bundle-1.0.0.jar
+# Note the bundle ID (e.g., 3)
+
+# Start machine management bundle
+g! start 3
 
 # Check services
 g! services | grep MemberService
