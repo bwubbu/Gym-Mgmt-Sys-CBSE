@@ -1,8 +1,11 @@
 package com.gymmanagement.osgi.machine.internal;
 
 import com.gymmanagement.osgi.base.entity.Machine;
+import com.gymmanagement.osgi.base.entity.Maintenance;
 import com.gymmanagement.osgi.base.entity.Member;
 import com.gymmanagement.osgi.base.service.IMachineService;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,5 +75,33 @@ public class MachineServiceImpl implements IMachineService {
         Machine m = getMachine(machineId);
         if (m == null) return "Machine not found.";
         return m.getAllBookings();
+    }
+
+    @Override
+    public String scheduleMaintenance(int machineId, LocalDate startDate, LocalDate endDate, String description) {
+        Machine m = getMachine(machineId);
+        if (m == null) return "Machine not found.";
+        if (startDate == null || endDate == null) return "Invalid date range.";
+        if (endDate.isBefore(startDate)) return "End date cannot be before start date.";
+
+        // Generate simple ID (assuming single instance logic, simplified)
+        int maintId = (int) (System.currentTimeMillis() % 10000);
+        Maintenance maintenance = new Maintenance(maintId, machineId, startDate, endDate, description, "SCHEDULED");
+
+        m.addMaintenance(maintenance);
+        return "Maintenance scheduled from " + startDate + " to " + endDate;
+    }
+
+    @Override
+    public List<Machine> getAvailableMachines(LocalDate date) {
+        List<Machine> available = new ArrayList<>();
+        if (date == null) return available;
+
+        for (Machine m : machines) {
+            if (!m.isUnderMaintenance(date)) {
+                available.add(m);
+            }
+        }
+        return available;
     }
 }

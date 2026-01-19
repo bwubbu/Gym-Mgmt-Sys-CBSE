@@ -1,5 +1,8 @@
 package com.gymmanagement.osgi.base.entity;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.Serializable;
 
 /**
@@ -14,6 +17,7 @@ public class Machine implements Serializable, GymMachine {
     private double maxWeightCapacity;
     private double machineWeight;
     private String type;
+    private List<Maintenance> maintenanceSchedule = new ArrayList<>();
     private static final long serialVersionUID = -7664452136969625334L;
     private Member[] bookings = new Member[8]; // Maximum 8 bookings per machine per day
 
@@ -108,14 +112,51 @@ public class Machine implements Serializable, GymMachine {
         return bookings;
     }
 
+    // Maintenance Management
+    public List<Maintenance> getMaintenanceSchedule() {
+        return maintenanceSchedule;
+    }
+
+    public void addMaintenance(Maintenance maintenance) {
+        if (this.maintenanceSchedule == null) {
+            this.maintenanceSchedule = new ArrayList<>();
+        }
+        this.maintenanceSchedule.add(maintenance);
+    }
+
+    public boolean isUnderMaintenance(LocalDate date) {
+        if (this.maintenanceSchedule == null)
+            return false;
+
+        for (Maintenance m : this.maintenanceSchedule) {
+            if ("COMPLETED".equalsIgnoreCase(m.getStatus()) || "CANCELLED".equalsIgnoreCase(m.getStatus())) {
+                continue;
+            }
+            // Check date range
+            if (m.getStartDate() != null && m.getEndDate() != null) {
+                if (!date.isBefore(m.getStartDate()) && !date.isAfter(m.getEndDate())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public String bookMachine(Member member) {
         if (member == null) {
             return "Invalid member";
         }
+
         if (member.getPayment() != null && member.getPayment().getOutstandingBalance() != 0.0) {
             return "Sadly Can't book this machine because you have outstanding balance";
         }
+
+        // Check maintenance scheduling
+        if (isUnderMaintenance(LocalDate.now())) {
+            return "Machine is currently under maintenance.";
+        }
+
         for (int i = 0; i < bookings.length; i++) {
             if (bookings[i] != null && bookings[i].equals(member)) {
                 return "You already booked this machine";
