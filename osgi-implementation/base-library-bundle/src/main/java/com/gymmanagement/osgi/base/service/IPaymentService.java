@@ -3,6 +3,7 @@ package com.gymmanagement.osgi.base.service;
 import com.gymmanagement.osgi.base.entity.Member;
 import com.gymmanagement.osgi.base.entity.Payment;
 import java.util.List;
+import java.util.Map;
 
 /**
  * OSGi service interface for Payment Management
@@ -42,5 +43,25 @@ public interface IPaymentService {
      * @return List of members with zero balance
      */
     List<Member> getMembersWithZeroBalance();
+
+    /**
+     * Add outstanding balance to ALL members (UC-14 Flow A)
+     * @param amount Amount to add to all members
+     * @return Success message
+     */
+    String addOutstandingBalanceToAll(double amount);
+
+    /**
+     * Generate payment analytics data (UC-16)
+     * @return Map containing:
+     *   - totalOutstandingBalance: double
+     *   - averageOutstandingBalance: double
+     *   - membersWithOutstandingBalance: int
+     *   - membersWithZeroBalance: int
+     *   - totalMembers: int
+     *   - memberDetails: List of Maps with name, regId, balance, status
+     *   - generatedDate: String
+     */
+    Map<String, Object> generatePaymentAnalytics();
 }
 
