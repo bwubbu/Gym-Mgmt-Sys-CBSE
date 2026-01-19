@@ -25,6 +25,9 @@ public class TestClient implements BundleActivator {
         
         // Test ITrainerService
         testTrainerService(context);
+        
+        // Test IPaymentService (add outstanding balances)
+        testPaymentService(context);
 
         // Test IReportService
         testReportService(context);
@@ -54,25 +57,110 @@ public class TestClient implements BundleActivator {
         System.out.println("✅ IMemberService found and retrieved");
         
         try {
-            // Create a test member
-            Date joinDate = new Date(1, 15, 2024);
-            Date dob = new Date(5, 20, 1995);
-            Payment payment = new Payment(0.0, "Test User", "1234-5678-9012-3456");
-            Member member = new Member(1, "John Doe", "john@example.com", 
-                "0300-1234567", "123 Main St", joinDate, dob, 29, "Male", 
-                1.75, 70.0, payment, "Weight Loss");
+            // Seed comprehensive sample data for analytics
+            System.out.println("\n📊 Seeding sample data for analytics...");
             
-            // Test adding member
-            String result = memberService.addMember(member);
-            System.out.println("✅ Add Member: " + result);
+            // Member 1: Young male, Weight Loss, Zero balance, Joined Jan 2024
+            Date joinDate1 = new Date(1, 15, 2024);
+            Date dob1 = new Date(5, 20, 1995);
+            Payment payment1 = new Payment(0.0, "John Doe", "1234-5678-9012-3456");
+            Member member1 = new Member(0, "John Doe", "john@example.com", 
+                "0300-1234567", "123 Main St", joinDate1, dob1, 29, "Male", 
+                1.75, 70.0, payment1, "Weight Loss");
+            memberService.addMember(member1);
+            System.out.println("  ✓ Added: John Doe (Male, 29, Weight Loss, $0 balance)");
             
-            // Test getting member
-            Member retrieved = memberService.getMember(1);
-            if (retrieved != null) {
-                System.out.println("✅ Get Member: Found member " + retrieved.getName());
-            } else {
-                System.out.println("❌ Get Member: Member not found");
-            }
+            // Member 2: Young female, Muscle Gain, Outstanding balance, Joined Feb 2024
+            Date joinDate2 = new Date(2, 10, 2024);
+            Date dob2 = new Date(8, 15, 1998);
+            Payment payment2 = new Payment(150.0, "Sarah Smith", "2345-6789-0123-4567");
+            Member member2 = new Member(0, "Sarah Smith", "sarah@example.com", 
+                "0300-2345678", "456 Oak Ave", joinDate2, dob2, 26, "Female", 
+                1.65, 55.0, payment2, "Muscle Gain");
+            memberService.addMember(member2);
+            System.out.println("  ✓ Added: Sarah Smith (Female, 26, Muscle Gain, $150 balance)");
+            
+            // Member 3: Middle-aged male, Endurance, Zero balance, Joined Mar 2024
+            Date joinDate3 = new Date(3, 5, 2024);
+            Date dob3 = new Date(3, 12, 1985);
+            Payment payment3 = new Payment(0.0, "Mike Johnson", "3456-7890-1234-5678");
+            Member member3 = new Member(0, "Mike Johnson", "mike@example.com", 
+                "0300-3456789", "789 Pine Rd", joinDate3, dob3, 39, "Male", 
+                1.80, 85.0, payment3, "Endurance");
+            memberService.addMember(member3);
+            System.out.println("  ✓ Added: Mike Johnson (Male, 39, Endurance, $0 balance)");
+            
+            // Member 4: Middle-aged female, Flexibility, Outstanding balance, Joined Apr 2024
+            Date joinDate4 = new Date(4, 20, 2024);
+            Date dob4 = new Date(11, 8, 1988);
+            Payment payment4 = new Payment(75.50, "Emily Davis", "4567-8901-2345-6789");
+            Member member4 = new Member(0, "Emily Davis", "emily@example.com", 
+                "0300-4567890", "321 Elm St", joinDate4, dob4, 36, "Female", 
+                1.70, 62.0, payment4, "Flexibility");
+            memberService.addMember(member4);
+            System.out.println("  ✓ Added: Emily Davis (Female, 36, Flexibility, $75.50 balance)");
+            
+            // Member 5: Older male, General Fitness, Zero balance, Joined May 2024
+            Date joinDate5 = new Date(5, 1, 2024);
+            Date dob5 = new Date(7, 22, 1975);
+            Payment payment5 = new Payment(0.0, "Robert Brown", "5678-9012-3456-7890");
+            Member member5 = new Member(0, "Robert Brown", "robert@example.com", 
+                "0300-5678901", "654 Maple Dr", joinDate5, dob5, 49, "Male", 
+                1.78, 90.0, payment5, "General Fitness");
+            memberService.addMember(member5);
+            System.out.println("  ✓ Added: Robert Brown (Male, 49, General Fitness, $0 balance)");
+            
+            // Member 6: Young female, Weight Loss, Outstanding balance, Joined Jun 2024
+            Date joinDate6 = new Date(6, 15, 2024);
+            Date dob6 = new Date(2, 14, 2000);
+            Payment payment6 = new Payment(200.0, "Lisa Wilson", "6789-0123-4567-8901");
+            Member member6 = new Member(0, "Lisa Wilson", "lisa@example.com", 
+                "0300-6789012", "987 Cedar Ln", joinDate6, dob6, 24, "Female", 
+                1.60, 65.0, payment6, "Weight Loss");
+            memberService.addMember(member6);
+            System.out.println("  ✓ Added: Lisa Wilson (Female, 24, Weight Loss, $200 balance)");
+            
+            // Member 7: Middle-aged male, Muscle Gain, Zero balance, Joined Jul 2024
+            Date joinDate7 = new Date(7, 10, 2024);
+            Date dob7 = new Date(9, 30, 1982);
+            Payment payment7 = new Payment(0.0, "David Lee", "7890-1234-5678-9012");
+            Member member7 = new Member(0, "David Lee", "david@example.com", 
+                "0300-7890123", "147 Birch Way", joinDate7, dob7, 42, "Male", 
+                1.82, 88.0, payment7, "Muscle Gain");
+            memberService.addMember(member7);
+            System.out.println("  ✓ Added: David Lee (Male, 42, Muscle Gain, $0 balance)");
+            
+            // Member 8: Young male, Endurance, Outstanding balance, Joined Aug 2024
+            Date joinDate8 = new Date(8, 25, 2024);
+            Date dob8 = new Date(4, 5, 1997);
+            Payment payment8 = new Payment(125.75, "Alex Taylor", "8901-2345-6789-0123");
+            Member member8 = new Member(0, "Alex Taylor", "alex@example.com", 
+                "0300-8901234", "258 Spruce Ct", joinDate8, dob8, 27, "Male", 
+                1.77, 72.0, payment8, "Endurance");
+            memberService.addMember(member8);
+            System.out.println("  ✓ Added: Alex Taylor (Male, 27, Endurance, $125.75 balance)");
+            
+            // Member 9: Older female, General Fitness, Zero balance, Joined Sep 2024
+            Date joinDate9 = new Date(9, 12, 2024);
+            Date dob9 = new Date(12, 3, 1970);
+            Payment payment9 = new Payment(0.0, "Maria Garcia", "9012-3456-7890-1234");
+            Member member9 = new Member(0, "Maria Garcia", "maria@example.com", 
+                "0300-9012345", "369 Willow Pl", joinDate9, dob9, 54, "Female", 
+                1.68, 68.0, payment9, "General Fitness");
+            memberService.addMember(member9);
+            System.out.println("  ✓ Added: Maria Garcia (Female, 54, General Fitness, $0 balance)");
+            
+            // Member 10: Middle-aged female, Flexibility, Outstanding balance, Joined Oct 2024
+            Date joinDate10 = new Date(10, 30, 2024);
+            Date dob10 = new Date(6, 18, 1986);
+            Payment payment10 = new Payment(50.0, "Jennifer Martinez", "0123-4567-8901-2345");
+            Member member10 = new Member(0, "Jennifer Martinez", "jennifer@example.com", 
+                "0300-0123456", "741 Ash Blvd", joinDate10, dob10, 38, "Female", 
+                1.72, 60.0, payment10, "Flexibility");
+            memberService.addMember(member10);
+            System.out.println("  ✓ Added: Jennifer Martinez (Female, 38, Flexibility, $50 balance)");
+            
+            System.out.println("\n✅ Sample data seeding complete!");
             
             // Test getting all members
             int totalMembers = memberService.getAllMembers().size();
@@ -80,7 +168,7 @@ public class TestClient implements BundleActivator {
             
             // Test search
             var searchResults = memberService.searchMembersByName("John");
-            System.out.println("✅ SearchMembers: " + searchResults.size() + " result(s)");
+            System.out.println("✅ SearchMembers: " + searchResults.size() + " result(s) for 'John'");
             
         } catch (Exception e) {
             System.out.println("❌ Error testing IMemberService: " + e.getMessage());
@@ -111,24 +199,55 @@ public class TestClient implements BundleActivator {
         System.out.println("✅ ITrainerService found and retrieved");
         
         try {
-            // Create a test trainer
-            Date joinDate = new Date(1, 15, 2024);
-            Date dob = new Date(5, 20, 1990);
-            Trainer trainer = new Trainer(1, "Jane Gym", "jane@gmail.com", 
-                "0300-7654321", "456 Fitness Ave", joinDate, dob, 34, "Female", 
+            // Seed multiple trainers with different specializations
+            System.out.println("\n💪 Seeding trainer data...");
+            
+            // Trainer 1: Yoga specialist
+            Date joinDate1 = new Date(1, 15, 2024);
+            Date dob1 = new Date(5, 20, 1990);
+            Trainer trainer1 = new Trainer(0, "Jane Gym", "jane@gmail.com", 
+                "0300-7654321", "456 Fitness Ave", joinDate1, dob1, 34, "Female", 
                 "Yoga", 30.0, 20.0, "Intermediate");
+            trainerService.addTrainer(trainer1);
+            System.out.println("  ✓ Added: Jane Gym (Yoga, Female, 34)");
             
-            // Test adding trainer
-            String result = trainerService.addTrainer(trainer);
-            System.out.println("✅ Add Trainer: " + result);
+            // Trainer 2: Strength training specialist
+            Date joinDate2 = new Date(2, 1, 2024);
+            Date dob2 = new Date(8, 15, 1988);
+            Trainer trainer2 = new Trainer(0, "Mark Strong", "mark@example.com", 
+                "0300-8765432", "789 Power St", joinDate2, dob2, 36, "Male", 
+                "Strength Training", 45.0, 15.0, "Advanced");
+            trainerService.addTrainer(trainer2);
+            System.out.println("  ✓ Added: Mark Strong (Strength Training, Male, 36)");
             
-            // Test getting trainer
-            Trainer retrieved = trainerService.getTrainer(1);
-            if (retrieved != null) {
-                System.out.println("✅ Get Trainer: Found trainer " + retrieved.getName());
-            } else {
-                System.out.println("❌ Get Trainer: Trainer not found");
-            }
+            // Trainer 3: Cardio specialist
+            Date joinDate3 = new Date(3, 10, 2024);
+            Date dob3 = new Date(3, 22, 1992);
+            Trainer trainer3 = new Trainer(0, "Amy Runner", "amy@example.com", 
+                "0300-9876543", "321 Cardio Ave", joinDate3, dob3, 32, "Female", 
+                "Cardio", 35.0, 18.0, "Intermediate");
+            trainerService.addTrainer(trainer3);
+            System.out.println("  ✓ Added: Amy Runner (Cardio, Female, 32)");
+            
+            // Trainer 4: Pilates specialist
+            Date joinDate4 = new Date(4, 5, 2024);
+            Date dob4 = new Date(11, 8, 1985);
+            Trainer trainer4 = new Trainer(0, "Sophie Core", "sophie@example.com", 
+                "0300-0987654", "654 Flexibility Rd", joinDate4, dob4, 39, "Female", 
+                "Pilates", 40.0, 12.0, "Advanced");
+            trainerService.addTrainer(trainer4);
+            System.out.println("  ✓ Added: Sophie Core (Pilates, Female, 39)");
+            
+            // Trainer 5: CrossFit specialist
+            Date joinDate5 = new Date(5, 20, 2024);
+            Date dob5 = new Date(7, 14, 1987);
+            Trainer trainer5 = new Trainer(0, "Tom Cross", "tom@example.com", 
+                "0300-1098765", "147 Intensity Way", joinDate5, dob5, 37, "Male", 
+                "CrossFit", 50.0, 10.0, "Expert");
+            trainerService.addTrainer(trainer5);
+            System.out.println("  ✓ Added: Tom Cross (CrossFit, Male, 37)");
+            
+            System.out.println("\n✅ Trainer data seeding complete!");
             
             // Test getting all trainers
             int totalTrainers = trainerService.getAllTrainers().size();
@@ -136,20 +255,40 @@ public class TestClient implements BundleActivator {
             
             // Test search
             var searchResults = trainerService.searchTrainersByName("Jane");
-            System.out.println("✅ SearchTrainers: " + searchResults.size() + " result(s)");
+            System.out.println("✅ SearchTrainers: " + searchResults.size() + " result(s) for 'Jane'");
 
-            // Test member assignment (UC-7)
-            trainerService.assignMemberToTrainer(1, 101);
-            System.out.println("✅ AssignMember: Assigned member 101 to trainer 1");
-            Trainer tAfterAssign = trainerService.getTrainer(1);
-            System.out.println("   Assigned Members: " + tAfterAssign.getAssignedMemberIds());
+            // Test member assignment (UC-7) - assign some members to trainers
+            System.out.println("\n📋 Assigning members to trainers...");
+            trainerService.assignMemberToTrainer(1, 1); // Jane -> John
+            trainerService.assignMemberToTrainer(1, 2); // Jane -> Sarah
+            trainerService.assignMemberToTrainer(2, 3); // Mark -> Mike
+            trainerService.assignMemberToTrainer(2, 7); // Mark -> David
+            trainerService.assignMemberToTrainer(3, 8); // Amy -> Alex
+            System.out.println("✅ Assigned members to trainers");
 
-            // Test performance update (UC-8)
-            String perfResult = trainerService.updatePerformance(1, 4.5, true);
-            System.out.println("✅ UpdatePerformance: " + perfResult);
-            Trainer tAfterPerf = trainerService.getTrainer(1);
-            System.out.println("   Avg Rating: " + tAfterPerf.getAverageRating());
-            System.out.println("   Attendance Days: " + tAfterPerf.getAttendanceDays());
+            // Test performance update (UC-8) - update ratings for some trainers
+            System.out.println("\n⭐ Updating trainer performance...");
+            trainerService.updatePerformance(1, 4.5, true); // Jane: 4.5 rating, attended
+            trainerService.updatePerformance(1, 4.8, true); // Jane: another session
+            trainerService.updatePerformance(2, 4.2, true); // Mark: 4.2 rating
+            trainerService.updatePerformance(3, 4.9, true); // Amy: 4.9 rating
+            trainerService.updatePerformance(3, 5.0, true); // Amy: perfect rating
+            System.out.println("✅ Updated trainer performance ratings");
+            
+            // Display trainer stats
+            Trainer t1 = trainerService.getTrainer(1);
+            Trainer t2 = trainerService.getTrainer(2);
+            Trainer t3 = trainerService.getTrainer(3);
+            System.out.println("\n📊 Trainer Performance Summary:");
+            System.out.println("   " + t1.getName() + ": Rating " + t1.getAverageRating() + 
+                             ", " + t1.getAttendanceDays() + " days, " + 
+                             t1.getAssignedMemberIds().size() + " members");
+            System.out.println("   " + t2.getName() + ": Rating " + t2.getAverageRating() + 
+                             ", " + t2.getAttendanceDays() + " days, " + 
+                             t2.getAssignedMemberIds().size() + " members");
+            System.out.println("   " + t3.getName() + ": Rating " + t3.getAverageRating() + 
+                             ", " + t3.getAttendanceDays() + " days, " + 
+                             t3.getAssignedMemberIds().size() + " members");
             
         } catch (Exception e) {
             System.out.println("❌ Error testing ITrainerService: " + e.getMessage());
@@ -158,6 +297,58 @@ public class TestClient implements BundleActivator {
         
         // Release service
         context.ungetService(trainerRef);
+    }
+    
+    private void testPaymentService(BundleContext context) {
+        System.out.println("\n--- Testing IPaymentService ---");
+        
+        ServiceReference<IPaymentService> paymentRef = 
+            context.getServiceReference(IPaymentService.class);
+        
+        if (paymentRef == null) {
+            System.out.println("⚠️  IPaymentService not found in service registry (skipping payment tests)");
+            return;
+        }
+        
+        IPaymentService paymentService = context.getService(paymentRef);
+        if (paymentService == null) {
+            System.out.println("⚠️  Failed to get IPaymentService instance (skipping payment tests)");
+            return;
+        }
+        
+        System.out.println("✅ IPaymentService found and retrieved");
+        
+        try {
+            // Note: Some members already have outstanding balances from creation
+            // Let's add additional balances to demonstrate payment analytics
+            System.out.println("\n💰 Setting up payment data for analytics...");
+            
+            // Member 2 (Sarah) already has $150, let's add more
+            String result1 = paymentService.addOutstandingBalance(2, 50.0);
+            System.out.println("  ✓ Added $50 to member 2 (Sarah): " + result1);
+            
+            // Member 6 (Lisa) already has $200, that's good for testing
+            
+            // Member 8 (Alex) already has $125.75, let's add more
+            String result2 = paymentService.addOutstandingBalance(8, 25.0);
+            System.out.println("  ✓ Added $25 to member 8 (Alex): " + result2);
+            
+            // Get payment analytics summary
+            Map<String, Object> analytics = paymentService.generatePaymentAnalytics();
+            System.out.println("\n📊 Payment Analytics Summary:");
+            System.out.println("   Total Outstanding: $" + analytics.get("totalOutstandingBalance"));
+            System.out.println("   Average Outstanding: $" + analytics.get("averageOutstandingBalance"));
+            System.out.println("   Members with Balance: " + analytics.get("membersWithOutstandingBalance"));
+            System.out.println("   Members with Zero Balance: " + analytics.get("membersWithZeroBalance"));
+            System.out.println("   Total Members: " + analytics.get("totalMembers"));
+            
+        } catch (Exception e) {
+            System.out.println("❌ Error testing IPaymentService: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        // Release service
+        context.ungetService(paymentRef);
     }
     
     private void testReportService(BundleContext context) {
