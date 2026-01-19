@@ -340,6 +340,18 @@ public class TestClient implements BundleActivator {
                 System.out.println("❌ GetAvailableMachines: Machine 102 should be available.");
             }
 
+            // --- Test getUsageStatistics ---
+            System.out.println("--- Testing Usage Statistics ---");
+            List<com.gymmanagement.osgi.base.dto.MachineUsageStats> stats = machineService.getUsageStatistics();
+            if (stats != null && !stats.isEmpty()) {
+                System.out.println("✅ Usage Statistics retrieved: " + stats.size() + " records.");
+                for (com.gymmanagement.osgi.base.dto.MachineUsageStats s : stats) {
+                    System.out.println("   -> " + s.toString());
+                }
+            } else {
+                System.out.println("❌ Usage Statistics: Returned empty or null.");
+            }
+
         } catch (Exception e) {
             System.out.println("❌ Error testing IMachineService: " + e.getMessage());
             e.printStackTrace();

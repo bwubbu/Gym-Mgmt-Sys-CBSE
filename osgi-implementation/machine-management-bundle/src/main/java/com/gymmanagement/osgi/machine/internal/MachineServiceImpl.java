@@ -4,6 +4,7 @@ import com.gymmanagement.osgi.base.entity.Machine;
 import com.gymmanagement.osgi.base.entity.Maintenance;
 import com.gymmanagement.osgi.base.entity.Member;
 import com.gymmanagement.osgi.base.service.IMachineService;
+import com.gymmanagement.osgi.base.dto.MachineUsageStats;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -103,5 +104,21 @@ public class MachineServiceImpl implements IMachineService {
             }
         }
         return available;
+    }
+
+    @Override
+    public List<MachineUsageStats> getUsageStatistics() {
+        List<MachineUsageStats> stats = new ArrayList<>();
+        for (Machine m : machines) {
+            int bookedSlots = 0;
+            Member[] bookings = m.getBookings();
+            for (Member booking : bookings) {
+                if (booking != null) {
+                    bookedSlots++;
+                }
+            }
+            stats.add(new MachineUsageStats(m.getRegId(), m.getName(), bookings.length, bookedSlots));
+        }
+        return stats;
     }
 }

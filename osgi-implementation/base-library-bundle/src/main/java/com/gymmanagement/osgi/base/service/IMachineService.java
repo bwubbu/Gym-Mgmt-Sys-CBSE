@@ -1,5 +1,6 @@
 package com.gymmanagement.osgi.base.service;
 
+import com.gymmanagement.osgi.base.dto.MachineUsageStats;
 import com.gymmanagement.osgi.base.entity.Machine;
 import com.gymmanagement.osgi.base.entity.Member;
 import java.time.LocalDate;
@@ -92,4 +93,11 @@ public interface IMachineService {
      * @return List of available machines
      */
     List<Machine> getAvailableMachines(LocalDate date);
+
+    /**
+     * Get usage statistics for all machines
+     * 
+     * @return List of usage statistics
+     */
+    List<MachineUsageStats> getUsageStatistics();
 }
