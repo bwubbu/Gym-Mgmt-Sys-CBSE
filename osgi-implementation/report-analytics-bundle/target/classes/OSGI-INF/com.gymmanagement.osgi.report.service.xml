@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="com.gymmanagement.osgi.report.service">
-   <implementation class="com.gymmanagement.osgi.report.internal.ReportServiceImpl"/>
-   <service>
-      <provide interface="com.gymmanagement.osgi.base.service.IReportService"/>
-   </service>
-   <property name="service.pid" value="com.gymmanagement.osgi.report.service"/>
-</scr:component>
-
