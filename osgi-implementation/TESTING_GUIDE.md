@@ -4,7 +4,11 @@
 
 1. **Java 17+** installed and configured
 2. **Maven 3.6+** installed
-3. **Apache Felix Framework** (we'll download this)
+3. **OSGi Framework** - Choose one:
+   - **Apache Felix** (lightweight, simple)
+   - **Eclipse Equinox** (more features, Eclipse-based)
+
+> **Note**: OSGi bundles are **portable** across different framework implementations! Your bundles will work with both Felix and Equinox without any code changes.
 
 ## Step 1: Build All OSGi Bundles
 
@@ -20,32 +24,36 @@ This will create JAR files in each bundle's `target/` directory:
 - `member-management-bundle/target/member-management-bundle-1.0.0.jar`
 - `report-analytics-bundle/target/report-analytics-bundle-1.0.0.jar`
 
-## Step 2: Download Apache Felix Framework
+## Step 2: Choose Your OSGi Framework
 
+### Option A: Apache Felix (Recommended for Beginners)
+
+**Pros:**
+- Lightweight and simple
+- Easy to set up
+- Good for learning OSGi
+
+**Download:**
 1. Go to: https://felix.apache.org/downloads.cgi
 2. Download **Apache Felix Framework Distribution** (latest version, e.g., 7.0.0)
 3. Extract it to a directory (e.g., `C:\felix-framework` or `~/felix-framework`)
 
-## Step 3: Copy Bundles to Felix
-
-Copy all built JAR files to Felix's `bundle/` directory:
-
+**Copy Bundles:**
 ```bash
 # Windows PowerShell
 Copy-Item "base-library-bundle\target\*.jar" "C:\felix-framework\bundle\"
 Copy-Item "member-management-bundle\target\*.jar" "C:\felix-framework\bundle\"
 Copy-Item "report-analytics-bundle\target\*.jar" "C:\felix-framework\bundle\"
+Copy-Item "test-client-bundle\target\*.jar" "C:\felix-framework\bundle\"
 
 # Linux/Mac
 cp base-library-bundle/target/*.jar ~/felix-framework/bundle/
 cp member-management-bundle/target/*.jar ~/felix-framework/bundle/
 cp report-analytics-bundle/target/*.jar ~/felix-framework/bundle/
+cp test-client-bundle/target/*.jar ~/felix-framework/bundle/
 ```
 
-## Step 4: Start Apache Felix
-
-Navigate to Felix directory and start it:
-
+**Start Felix:**
 ```bash
 cd C:\felix-framework  # or ~/felix-framework
 java -jar bin/felix.jar
@@ -53,69 +61,216 @@ java -jar bin/felix.jar
 
 You should see the Felix Gogo shell prompt: `g!`
 
-## Step 5: Install and Start Bundles
+**⚠️ IMPORTANT: Install Declarative Services Runtime**
 
-In the Felix Gogo shell, run these commands:
+Your bundles use OSGi Declarative Services (DS), so you need to install the Apache Felix SCR (Service Component Runtime) bundle:
 
-### 5.1 List Available Bundles
+1. **Download Apache Felix SCR:**
+   - Go to: https://felix.apache.org/downloads.cgi
+   - Download **Apache Felix Service Component Runtime (SCR)** (latest version, e.g., 2.2.2)
+   - Extract the JAR file (e.g., `org.apache.felix.scr-2.2.2.jar`)
+
+2. **Copy SCR bundle to Felix:**
+   ```powershell
+   Copy-Item "org.apache.felix.scr-2.2.2.jar" "C:\felix-framework\bundle\"
+   ```
+
+3. **In Felix shell, install and start SCR FIRST (before your bundles):**
+   ```bash
+   g! install file:/C:/felix-framework/bundle/org.apache.felix.scr-2.2.2.jar
+   g! start <scr-bundle-id>
+   ```
+
+   **Note:** Install and start SCR bundle BEFORE installing your application bundles!
+
+### Option B: Eclipse Equinox
+
+**Pros:**
+- More features and tooling
+- Better integration with Eclipse IDE
+- More enterprise-ready
+- Used by Eclipse IDE itself
+
+**Download:**
+1. Go to: https://download.eclipse.org/equinox/
+2. Download **Equinox SDK** (latest version, e.g., 3.21.0)
+3. Extract it to a directory (e.g., `C:\equinox` or `~/equinox`)
+
+**Copy Bundles:**
+```bash
+# Windows PowerShell
+Copy-Item "base-library-bundle\target\*.jar" "C:\equinox\plugins\"
+Copy-Item "member-management-bundle\target\*.jar" "C:\equinox\plugins\"
+Copy-Item "report-analytics-bundle\target\*.jar" "C:\equinox\plugins\"
+Copy-Item "test-client-bundle\target\*.jar" "C:\equinox\plugins\"
+
+# Linux/Mac
+cp base-library-bundle/target/*.jar ~/equinox/plugins/
+cp member-management-bundle/target/*.jar ~/equinox/plugins/
+cp report-analytics-bundle/target/*.jar ~/equinox/plugins/
+cp test-client-bundle/target/*.jar ~/equinox/plugins/
+```
+
+**Start Equinox:**
+```bash
+cd C:\equinox  # or ~/equinox
+java -jar plugins/org.eclipse.osgi_*.jar -console
+```
+
+You should see the Equinox console prompt: `osgi>`
+
+**Equinox Console Commands:**
+```bash
+osgi> ss                    # List all bundles (similar to Felix's `lb`)
+osgi> start <bundle-id>     # Start a bundle
+osgi> stop <bundle-id>      # Stop a bundle
+osgi> install file:/path/to/bundle.jar  # Install a bundle
+osgi> diag <bundle-id>      # Diagnose bundle issues
+osgi> services              # List services
+osgi> help                  # Show all commands
+```
+
+## Step 3: Framework Comparison
+
+| Feature | Apache Felix | Eclipse Equinox |
+|---------|-------------|-----------------|
+| **Shell** | Gogo (`g!`) | Equinox Console (`osgi>`) |
+| **Commands** | `lb`, `start`, `stop` | `ss`, `start`, `stop` |
+| **Bundle Directory** | `bundle/` | `plugins/` |
+| **Startup** | `java -jar bin/felix.jar` | `java -jar plugins/org.eclipse.osgi_*.jar -console` |
+| **Complexity** | Simpler | More features |
+| **Bundle Compatibility** | ✅ Same bundles work on both | ✅ Same bundles work on both |
+
+## Step 4: Install and Start Bundles
+
+### Using Apache Felix (Gogo Shell)
+
+**⚠️ CRITICAL: Install Declarative Services Runtime FIRST!**
+
+Your bundles use OSGi Declarative Services, so you MUST install the SCR bundle before your application bundles:
+
+### 4.0 Install Apache Felix SCR (Service Component Runtime)
+
+**First, download and copy SCR bundle:**
+1. Download **Apache Felix SCR** from: https://felix.apache.org/downloads.cgi
+2. Extract the JAR (e.g., `org.apache.felix.scr-2.2.2.jar`)
+3. Copy it to `C:\felix-framework\bundle\`
+
+**Then in Felix shell, install and start SCR:**
+```bash
+g! install file:/C:/felix-framework/bundle/org.apache.felix.scr-2.2.2.jar
+# Note the bundle ID (e.g., "Bundle ID: 1")
+g! start 1
+```
+
+**Verify SCR is active:**
+```bash
+g! lb
+# Look for org.apache.felix.scr - should be "Active"
+```
+
+**Now proceed with your application bundles:**
+
+### 4.1 List Available Bundles
 ```bash
 g! lb
 ```
 This shows all bundles in the `bundle/` directory.
 
-### 5.2 Install Base Library Bundle
+### 4.2 Install Base Library Bundle
 ```bash
-g! install file:/path/to/base-library-bundle-1.0.0.jar
+g! install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/base-library-bundle/target/base-library-bundle-1.0.0.jar
 ```
 Note the bundle ID that's returned (e.g., `1`).
 
-### 5.3 Start Base Library Bundle
+### 4.3 Start Base Library Bundle
 ```bash
 g! start 1
 ```
-Replace `1` with the actual bundle ID from step 5.2.
+Replace `1` with the actual bundle ID from step 4.2.
 
-### 5.4 Install and Start Member Management Bundle
+### 4.4 Install and Start Member Management Bundle
 ```bash
-g! install file:/path/to/member-management-bundle-1.0.0.jar
+g! install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/member-management-bundle/target/member-management-bundle-1.0.0.jar
 g! start <bundle-id>
 ```
 
-### 5.5 Install and Start Report Analytics Bundle
+### 4.5 Install and Start Report Analytics Bundle
 ```bash
-g! install file:/path/to/report-analytics-bundle-1.0.0.jar
+g! install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/report-analytics-bundle/target/report-analytics-bundle-1.0.0.jar
 g! start <bundle-id>
 ```
 
-## Step 6: Verify Services Are Registered
-
-### 6.1 Check All Services
+### 4.6 Install and Start Test Client Bundle
 ```bash
+g! install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/test-client-bundle/target/test-client-bundle-1.0.0.jar
+g! start <bundle-id>
+```
+
+### Using Eclipse Equinox (Console)
+
+In the Equinox console (`osgi>`), run these commands:
+
+```bash
+# List bundles
+osgi> ss
+
+# Install and start base library
+osgi> install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/base-library-bundle/target/base-library-bundle-1.0.0.jar
+osgi> start <bundle-id>
+
+# Install and start member management
+osgi> install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/member-management-bundle/target/member-management-bundle-1.0.0.jar
+osgi> start <bundle-id>
+
+# Install and start report analytics
+osgi> install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/report-analytics-bundle/target/report-analytics-bundle-1.0.0.jar
+osgi> start <bundle-id>
+
+# Install and start test client
+osgi> install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/test-client-bundle/target/test-client-bundle-1.0.0.jar
+osgi> start <bundle-id>
+```
+
+## Step 5: Verify Services Are Registered
+
+### Using Apache Felix
+
+```bash
+# Check all services
 g! services
+
+# Check specific service
+g! services | grep ReportService
+g! services | grep MemberService
+
+# Check bundle status
+g! lb
+# All bundles should show status "Active"
+
+# Check bundle dependencies
+g! diag <bundle-id>
 ```
-You should see services like:
+
+### Using Eclipse Equinox
+
+```bash
+# Check all services
+osgi> services
+
+# Check bundle status
+osgi> ss
+# All bundles should show status "ACTIVE"
+
+# Check bundle dependencies
+osgi> diag <bundle-id>
+```
+
+**Expected Services:**
 - `IMemberService` (from member-management-bundle)
 - `IReportService` (from report-analytics-bundle)
 
-### 6.2 Check Specific Service
-```bash
-g! services | grep ReportService
-g! services | grep MemberService
-```
-
-### 6.3 Check Bundle Status
-```bash
-g! lb
-```
-All bundles should show status `Active`.
-
-### 6.4 Check Bundle Dependencies
-```bash
-g! diag <bundle-id>
-```
-This shows if a bundle has any missing dependencies.
-
-## Step 7: Test the Services
+## Step 6: Test the Services
 
 ### Option A: Create a Simple Test Client Bundle
 
@@ -189,20 +344,80 @@ public class TestClient implements BundleActivator {
 }
 ```
 
-### Option B: Use Felix Shell Commands
+### Automatic Testing with Test Client Bundle
 
-You can also interact with services using Felix shell commands, but this requires additional setup.
+When you start the `test-client-bundle`, it will automatically:
+- Test `IMemberService` (add, get, search members)
+- Test `IReportService` (generate reports, analytics, exports)
+- Print test results with ✅ or ❌ indicators
 
-## Step 8: Troubleshooting
+You should see output like:
+```
+=== Testing OSGi Services ===
+✅ IMemberService found and working
+✅ IReportService found and working
+=== Testing Complete ===
+```
+
+## Step 7: Troubleshooting
+
+### Bundle Already Installed Error
+
+**Error:** `Bundle symbolic name and version are not unique: com.gymmanagement.osgi.base:1.0.0`
+
+This means the bundle is already installed. You have two options:
+
+**Option 1: Check and Start Existing Bundles (Recommended)**
+```bash
+# List all bundles to see what's installed
+g! lb
+
+# Find your bundle ID (look for com.gymmanagement.osgi.base)
+# If it's not Active, just start it:
+g! start <bundle-id>
+```
+
+**Option 2: Uninstall and Reinstall**
+```bash
+# List bundles to find the ID
+g! lb
+
+# Uninstall the existing bundle
+g! uninstall <bundle-id>
+
+# Then install again
+g! install file:/path/to/your-bundle.jar
+g! start <new-bundle-id>
+```
+
+**Quick Reset (Uninstall All Your Bundles):**
+```bash
+# List bundles
+g! lb
+
+# Uninstall all your application bundles (keep SCR and system bundles)
+# Replace <id1>, <id2>, etc. with your actual bundle IDs
+g! uninstall <id1> <id2> <id3> <id4>
+
+# Then reinstall in order
+```
 
 ### Bundle Won't Start
+
+**Felix:**
 ```bash
 g! diag <bundle-id>
 ```
+
+**Equinox:**
+```bash
+osgi> diag <bundle-id>
+```
+
 Check for missing dependencies or import/export package mismatches.
 
 ### Service Not Found
-- Verify the bundle providing the service is `Active`
+- Verify the bundle providing the service is `Active` (Felix) or `ACTIVE` (Equinox)
 - Check that the service interface is properly exported
 - Ensure the consuming bundle imports the correct package version
 
@@ -212,29 +427,61 @@ Check for missing dependencies or import/export package mismatches.
 - Ensure version ranges match (e.g., `[1.0,2)`)
 
 ### Check Bundle Logs
+
+**Felix:**
 ```bash
 g! log
 ```
+
+**Equinox:**
+```bash
+osgi> log
+```
+
 Shows recent log entries from bundles.
 
 ## Quick Test Script
 
-Here's a quick script to automate bundle installation (save as `install-bundles.txt`):
+### For Apache Felix
 
+Save as `install-bundles-felix.txt`:
 ```
-install file:/absolute/path/to/base-library-bundle-1.0.0.jar
-start <id-from-previous-command>
-install file:/absolute/path/to/member-management-bundle-1.0.0.jar
-start <id-from-previous-command>
-install file:/absolute/path/to/report-analytics-bundle-1.0.0.jar
-start <id-from-previous-command>
+install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/base-library-bundle/target/base-library-bundle-1.0.0.jar
+start 1
+install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/member-management-bundle/target/member-management-bundle-1.0.0.jar
+start 2
+install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/report-analytics-bundle/target/report-analytics-bundle-1.0.0.jar
+start 3
+install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/test-client-bundle/target/test-client-bundle-1.0.0.jar
+start 4
 lb
 services
 ```
 
 Then run:
 ```bash
-g! < install-bundles.txt
+g! < install-bundles-felix.txt
+```
+
+### For Eclipse Equinox
+
+Save as `install-bundles-equinox.txt`:
+```
+install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/base-library-bundle/target/base-library-bundle-1.0.0.jar
+start 1
+install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/member-management-bundle/target/member-management-bundle-1.0.0.jar
+start 2
+install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/report-analytics-bundle/target/report-analytics-bundle-1.0.0.jar
+start 3
+install file:/C:/Users/kyrod/OneDrive/Desktop/Gym-Mgmt/Gym-Mgmt-Sys-CBSE/osgi-implementation/test-client-bundle/target/test-client-bundle-1.0.0.jar
+start 4
+ss
+services
+```
+
+Then run:
+```bash
+osgi> < install-bundles-equinox.txt
 ```
 
 ## Expected Output
