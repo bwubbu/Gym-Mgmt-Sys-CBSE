@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
+    name="com.gymmanagement.osgi.machine.service">
+    <implementation class="com.gymmanagement.osgi.machine.internal.MachineServiceImpl" />
+    <service>
+        <provide interface="com.gymmanagement.osgi.base.service.IMachineService" />
+    </service>
+</scr:component>

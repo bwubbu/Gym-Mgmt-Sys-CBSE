@@ -17,9 +17,13 @@ The OSGi implementation follows a modular architecture where each component is a
    - Provides CRUD operations for members
 
 3. **trainer-management-bundle** - Trainer management service (to be implemented)
-4. **machine-management-bundle** - Machine and booking management service (to be implemented)
+4. **machine-management-bundle** - Machine and booking management service
+   - Implements `IMachineService`
+   - Provides CRUD operations for machines and Booking logic
 5. **payment-management-bundle** - Payment and financial management service (to be implemented)
-6. **report-analytics-bundle** - Reporting and analytics service (to be implemented)
+6. **report-analytics-bundle** - Reporting and analytics service
+   - Implements `IReportService`
+   - Provides system reports and analytics
 
 ## Building the Bundles
 

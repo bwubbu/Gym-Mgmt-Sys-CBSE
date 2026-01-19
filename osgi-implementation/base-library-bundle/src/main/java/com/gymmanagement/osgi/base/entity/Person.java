@@ -16,7 +16,7 @@ public abstract class Person implements Serializable {
     protected Date dateOfBirth;
     protected int age;
     protected String gender;
-    
+
     public Person() {
         regId = 0;
         name = null;
@@ -26,9 +26,9 @@ public abstract class Person implements Serializable {
         age = 0;
         gender = null;
     }
-    
-    public Person(int regId, String name, String gmail, String phoneNum, String address, 
-                  Date joinDate, Date dateOfBirth, int age, String gender) {
+
+    public Person(int regId, String name, String gmail, String phoneNum, String address,
+            Date joinDate, Date dateOfBirth, int age, String gender) {
         this.regId = regId;
         this.name = name;
         this.gmail = gmail;
@@ -39,9 +39,9 @@ public abstract class Person implements Serializable {
         this.age = age;
         this.gender = gender;
     }
-    
+
     abstract String getFinancialReport();
-    
+
     @Override
     public String toString() {
         return "\n---------------------------------------------------------------\n" +
@@ -55,11 +55,11 @@ public abstract class Person implements Serializable {
                 "\n\n> Date of Birth = " + (dateOfBirth != null ? dateOfBirth.toString() : "N/A") +
                 "\n\n> Gender = " + gender;
     }
-    
+
     public int caluAge(int yearOfBirth) {
         return (Year.now().getValue() - yearOfBirth);
     }
-    
+
     public boolean validateName(String name) {
         int count;
         if (name == null || name.length() > 30) {
@@ -77,14 +77,14 @@ public abstract class Person implements Serializable {
         }
         return true;
     }
-    
+
     public boolean validatePhone(String contactNumber) {
         int count;
-        if (contactNumber == null || !((contactNumber.length() == 12 && contactNumber.charAt(4) == '-' 
+        if (contactNumber == null || !((contactNumber.length() == 12 && contactNumber.charAt(4) == '-'
                 && contactNumber.charAt(0) == '0' && contactNumber.charAt(1) == '3')
-                && (contactNumber.charAt(2) == '0' || contactNumber.charAt(2) == '2' 
-                || contactNumber.charAt(2) == '1' || contactNumber.charAt(2) == '4' 
-                || contactNumber.charAt(2) == '3'))) {
+                && (contactNumber.charAt(2) == '0' || contactNumber.charAt(2) == '2'
+                        || contactNumber.charAt(2) == '1' || contactNumber.charAt(2) == '4'
+                        || contactNumber.charAt(2) == '3'))) {
             return false;
         } else {
             count = 0;
@@ -102,82 +102,96 @@ public abstract class Person implements Serializable {
         }
         return true;
     }
-    
+
     public boolean validateGmail(String gmail) {
         return gmail != null && gmail.endsWith("@gmail.com");
     }
-    
+
     // Getters and Setters
     public int getRegId() {
         return regId;
     }
-    
+
     public void setRegId(int regId) {
         this.regId = regId;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getGmail() {
         return gmail;
     }
-    
+
     public void setGmail(String gmail) {
         this.gmail = gmail;
     }
-    
+
     public String getPhoneNum() {
         return phoneNum;
     }
-    
+
     public void setPhoneNum(String phoneNum) {
         this.phoneNum = phoneNum;
     }
-    
+
     public String getAddress() {
         return address;
     }
-    
+
     public void setAddress(String address) {
         this.address = address;
     }
-    
+
     public Date getJoinDate() {
         return joinDate;
     }
-    
+
     public void setJoinDate(Date joinDate) {
         this.joinDate = joinDate;
     }
-    
+
     public Date getDateOfBirth() {
         return dateOfBirth;
     }
-    
+
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
-    
+
     public int getAge() {
         return age;
     }
-    
+
     public void setAge(int age) {
         this.age = age;
     }
-    
+
     public String getGender() {
         return gender;
     }
-    
+
     public void setGender(String gender) {
         this.gender = gender;
     }
-}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Person person = (Person) o;
+        return regId == person.regId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(regId);
+    }
+}
