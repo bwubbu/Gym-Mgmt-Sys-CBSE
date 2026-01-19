@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="com.gymmanagement.osgi.trainer.service">
+   <implementation class="com.gymmanagement.osgi.trainer.internal.TrainerServiceImpl"/>
+   <service>
+      <provide interface="com.gymmanagement.osgi.base.service.ITrainerService"/>
+   </service>
+   <property name="service.pid" value="com.gymmanagement.osgi.trainer.service"/>
+</scr:component>

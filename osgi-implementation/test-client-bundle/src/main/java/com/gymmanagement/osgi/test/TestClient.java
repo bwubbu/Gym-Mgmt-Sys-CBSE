@@ -23,6 +23,9 @@ public class TestClient implements BundleActivator {
         // Test IMemberService
         testMemberService(context);
         
+        // Test ITrainerService
+        testTrainerService(context);
+
         // Test IReportService
         testReportService(context);
         
@@ -86,6 +89,75 @@ public class TestClient implements BundleActivator {
         
         // Release service
         context.ungetService(memberRef);
+    }
+    
+    private void testTrainerService(BundleContext context) {
+        System.out.println("\n--- Testing ITrainerService ---");
+        
+        ServiceReference<ITrainerService> trainerRef = 
+            context.getServiceReference(ITrainerService.class);
+        
+        if (trainerRef == null) {
+            System.out.println("❌ ITrainerService not found in service registry");
+            return;
+        }
+        
+        ITrainerService trainerService = context.getService(trainerRef);
+        if (trainerService == null) {
+            System.out.println("❌ Failed to get ITrainerService instance");
+            return;
+        }
+        
+        System.out.println("✅ ITrainerService found and retrieved");
+        
+        try {
+            // Create a test trainer
+            Date joinDate = new Date(1, 15, 2024);
+            Date dob = new Date(5, 20, 1990);
+            Trainer trainer = new Trainer(1, "Jane Gym", "jane@gmail.com", 
+                "0300-7654321", "456 Fitness Ave", joinDate, dob, 34, "Female", 
+                "Yoga", 30.0, 20.0, "Intermediate");
+            
+            // Test adding trainer
+            String result = trainerService.addTrainer(trainer);
+            System.out.println("✅ Add Trainer: " + result);
+            
+            // Test getting trainer
+            Trainer retrieved = trainerService.getTrainer(1);
+            if (retrieved != null) {
+                System.out.println("✅ Get Trainer: Found trainer " + retrieved.getName());
+            } else {
+                System.out.println("❌ Get Trainer: Trainer not found");
+            }
+            
+            // Test getting all trainers
+            int totalTrainers = trainerService.getAllTrainers().size();
+            System.out.println("✅ GetAllTrainers: " + totalTrainers + " trainer(s) found");
+            
+            // Test search
+            var searchResults = trainerService.searchTrainersByName("Jane");
+            System.out.println("✅ SearchTrainers: " + searchResults.size() + " result(s)");
+
+            // Test member assignment (UC-7)
+            trainerService.assignMemberToTrainer(1, 101);
+            System.out.println("✅ AssignMember: Assigned member 101 to trainer 1");
+            Trainer tAfterAssign = trainerService.getTrainer(1);
+            System.out.println("   Assigned Members: " + tAfterAssign.getAssignedMemberIds());
+
+            // Test performance update (UC-8)
+            String perfResult = trainerService.updatePerformance(1, 4.5, true);
+            System.out.println("✅ UpdatePerformance: " + perfResult);
+            Trainer tAfterPerf = trainerService.getTrainer(1);
+            System.out.println("   Avg Rating: " + tAfterPerf.getAverageRating());
+            System.out.println("   Attendance Days: " + tAfterPerf.getAttendanceDays());
+            
+        } catch (Exception e) {
+            System.out.println("❌ Error testing ITrainerService: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        // Release service
+        context.ungetService(trainerRef);
     }
     
     private void testReportService(BundleContext context) {
@@ -169,4 +241,3 @@ public class TestClient implements BundleActivator {
         System.out.println("Test Client Bundle stopped");
     }
 }
-

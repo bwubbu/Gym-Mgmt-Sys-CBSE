@@ -42,6 +42,14 @@
             <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Trainer Management Bundle (for accessing trainer service) -->
+        <dependency>
+            <groupId>com.gymmanagement.osgi</groupId>
+            <artifactId>trainer-management-bundle</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
