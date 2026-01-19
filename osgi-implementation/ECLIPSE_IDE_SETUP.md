@@ -63,8 +63,22 @@ In the **Bundles** tab:
 3. Manually select your bundles:
    - ✅ `com.gymmanagement.osgi.base` (base-library-bundle)
    - ✅ `com.gymmanagement.osgi.member` (member-management-bundle)
+   - ✅ `com.gymmanagement.osgi.trainer` (trainer-management-bundle) ⚠️ **IMPORTANT**
+   - ✅ `com.gymmanagement.osgi.machine` (machine-management-bundle)
+   - ✅ `com.gymmanagement.osgi.payment` (payment-management-bundle)
    - ✅ `com.gymmanagement.osgi.report` (report-analytics-bundle)
    - ✅ `com.gymmanagement.osgi.test` (test-client-bundle)
+
+**⚠️ CRITICAL: Set Auto-Start to `true`**
+
+For each bundle, you'll see two columns: "Start Level" and "Auto-Start". The "Auto-Start" column should be set to **`true`** (not "default"):
+
+1. Find each bundle in the list
+2. Click on the "Auto-Start" column (shows "default")
+3. Change it to **`true`** from the dropdown (options are: `default`, `true`, `false`)
+4. This ensures bundles start automatically when the OSGi framework launches
+
+**Why this matters:** If bundles are set to "default", they may not start automatically, causing services like `ITrainerService` to not be registered.
 
 **Important:** Make sure to check:
 - ✅ **Add new workspace bundles to this launch configuration automatically**

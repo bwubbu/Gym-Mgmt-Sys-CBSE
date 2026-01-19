@@ -40,6 +40,16 @@ public class TestClient implements BundleActivator {
         System.out.println("\n=========================================");
         System.out.println("OSGi Test Client - Tests Complete");
         System.out.println("=========================================\n");
+        
+        // Optional: Start interactive demo if enabled
+        // To enable: Set system property -Dinteractive.demo=true
+        // Or uncomment the line below
+        String interactiveMode = System.getProperty("interactive.demo", "false");
+        if ("true".equalsIgnoreCase(interactiveMode)) {
+            System.out.println("Starting Interactive Demo Mode...");
+            System.out.println("(To disable, remove -Dinteractive.demo=true from JVM arguments)\n");
+            new InteractiveReportDemo(context).startInteractiveMenu();
+        }
     }
 
     private void testMemberService(BundleContext context) {
@@ -186,7 +196,24 @@ public class TestClient implements BundleActivator {
     private void testTrainerService(BundleContext context) {
         System.out.println("\n--- Testing ITrainerService ---");
 
-        ServiceReference<ITrainerService> trainerRef = context.getServiceReference(ITrainerService.class);
+        // Wait for service to become available (retry with delay)
+        // Note: Trainer bundle may start after test client, so we wait longer
+        ServiceReference<ITrainerService> trainerRef = null;
+        int maxRetries = 30; // Increased from 10 to 30
+        int retryDelay = 200; // milliseconds
+        
+        for (int i = 0; i < maxRetries; i++) {
+            trainerRef = context.getServiceReference(ITrainerService.class);
+            if (trainerRef != null) {
+                break;
+            }
+            try {
+                Thread.sleep(retryDelay);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
 
         if (trainerRef == null) {
             System.out.println("❌ ITrainerService not found in service registry");
