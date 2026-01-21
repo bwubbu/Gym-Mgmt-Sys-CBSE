@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Repository
 public class FileMaintenanceRepository {
 
-    private static final String FILE_NAME = "Maintenance";
+    private static final String FILE_NAME = "maintenance.dat";
     private List<Maintenance> maintenanceList = new ArrayList<>();
 
     public FileMaintenanceRepository() {
@@ -66,30 +66,23 @@ public class FileMaintenanceRepository {
         return maxId + 1;
     }
 
+    @SuppressWarnings("unchecked")
     private void loadMaintenanceFile() {
         File file = new File(FILE_NAME);
         if (!file.exists()) {
             return;
         }
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            while (true) {
-                try {
-                    Maintenance m = (Maintenance) ois.readObject();
-                    maintenanceList.add(m);
-                } catch (EOFException e) {
-                    break;
-                }
-            }
+            maintenanceList = (List<Maintenance>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            // Start fresh if corrupt or old format
+            maintenanceList = new ArrayList<>();
         }
     }
 
     private void saveMaintenanceFile() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-            for (Maintenance m : maintenanceList) {
-                oos.writeObject(m);
-            }
+            oos.writeObject(new ArrayList<>(maintenanceList));
         } catch (IOException e) {
             e.printStackTrace();
         }

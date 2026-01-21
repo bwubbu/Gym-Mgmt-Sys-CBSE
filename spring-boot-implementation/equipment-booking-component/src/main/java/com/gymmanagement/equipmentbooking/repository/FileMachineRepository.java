@@ -19,24 +19,12 @@ public class FileMachineRepository {
         loadMachineFile();
     }
 
-    // public List<Machine> findAll() {
-    //     return new ArrayList<>(machines); // Return copy
-    // }
-
-    @SuppressWarnings("unchecked")
     public List<Machine> findAll() {
-        File file = new File(FILE_NAME);
-        if (!file.exists()) return new ArrayList<Machine>();
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            return (List<Machine>) ois.readObject();
-        } catch (Exception e) {
-            return new ArrayList<Machine>();
-        }
+        return new ArrayList<>(machines);
     }
 
     public Optional<Machine> findById(int regId) {
-        return findAll().stream().filter(m -> m.getRegId() == regId).findFirst();
+        return machines.stream().filter(m -> m.getRegId() == regId).findFirst();
     }
 
     public Machine save(Machine machine) {
@@ -78,30 +66,23 @@ public class FileMachineRepository {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void loadMachineFile() {
         File file = new File(FILE_NAME);
         if (!file.exists()) {
             return;
         }
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            while (true) {
-                try {
-                    Machine machine = (Machine) ois.readObject();
-                    machines.add(machine);
-                } catch (EOFException e) {
-                    break;
-                }
-            }
+            machines = (List<Machine>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            // If file is corrupt or old format, start fresh
+            machines = new ArrayList<>();
         }
     }
 
     private void saveMachineFile() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-            for (Machine m : machines) {
-                oos.writeObject(m);
-            }
+            oos.writeObject(new ArrayList<>(machines));
         } catch (IOException e) {
             e.printStackTrace();
         }
