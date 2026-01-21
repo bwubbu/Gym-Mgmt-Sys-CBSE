@@ -59,6 +59,10 @@ public class ReportService implements IReportService {
         html.append("        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }\n");
         html.append("        .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }\n");
         html.append("        .header .date { font-size: 1.2em; opacity: 0.9; }\n");
+        html.append("        .nav-bar { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }\n");
+        html.append("        .nav-btn { border: none; border-radius: 999px; padding: 8px 16px; font-size: 0.9em; cursor: pointer; background: rgba(255,255,255,0.15); color: #fff; backdrop-filter: blur(4px); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }\n");
+        html.append("        .nav-btn:hover { background: rgba(255,255,255,0.3); }\n");
+        html.append("        .nav-btn span.icon { font-size: 1.1em; }\n");
         html.append("        .content { padding: 30px; }\n");
         html.append("        .section { margin-bottom: 40px; border-left: 4px solid #667eea; padding-left: 20px; }\n");
         html.append("        .section-title { font-size: 1.8em; color: #667eea; margin-bottom: 20px; font-weight: 600; display: flex; align-items: center; }\n");
@@ -79,6 +83,15 @@ public class ReportService implements IReportService {
         html.append("        <div class=\"header\">\n");
         html.append("            <h1>🏋️ Gym Management System</h1>\n");
         html.append("            <div class=\"date\">Report Generated: ").append(currentDate).append("</div>\n");
+        html.append("            <div class=\"nav-bar\">\n");
+        html.append("                <a class=\"nav-btn\" href=\"/api/reports/full\" target=\"_blank\"><span class=\"icon\">📄</span><span>View Full Report (Text)</span></a>\n");
+        html.append("                <a class=\"nav-btn\" href=\"/api/reports/export/full/txt\" target=\"_blank\"><span class=\"icon\">⬇️</span><span>Download Full Report (TXT)</span></a>\n");
+        html.append("                <a class=\"nav-btn\" href=\"/api/analytics/member/demographics/ui\" target=\"_blank\"><span class=\"icon\">👥</span><span>Member Demographics</span></a>\n");
+        html.append("                <a class=\"nav-btn\" href=\"/api/analytics/member/growth-trends/ui\" target=\"_blank\"><span class=\"icon\">📈</span><span>Growth Trends</span></a>\n");
+        html.append("                <a class=\"nav-btn\" href=\"/api/analytics/member/body-statistics/ui\" target=\"_blank\"><span class=\"icon\">⚖️</span><span>Body Statistics</span></a>\n");
+        html.append("                <a class=\"nav-btn\" href=\"/api/analytics/member/fitness-goals/ui\" target=\"_blank\"><span class=\"icon\">🎯</span><span>Fitness Goals</span></a>\n");
+        html.append("                <a class=\"nav-btn\" href=\"/api/analytics/equipment/usage/ui\" target=\"_blank\"><span class=\"icon\">🛠️</span><span>Equipment Usage</span></a>\n");
+        html.append("            </div>\n");
         html.append("        </div>\n");
         html.append("        <div class=\"content\">\n");
         

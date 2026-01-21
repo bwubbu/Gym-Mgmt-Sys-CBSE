@@ -143,7 +143,7 @@ public class ReportServiceImpl implements IReportService {
             report.append("No trainers found.\n");
         } else {
             for (Trainer trainer : trainers) {
-                report.append(trainer.toString()).append("\n");
+                report.append(trainer.toString(r)).append("\n");
             }
         }
         report.append("---------------------------------------------------------------\n");

@@ -29,6 +29,66 @@ public class EquipmentAnalyticsController {
         EquipmentUsageAnalyticsDTO report = reportService.generateEquipmentUsageAnalyticsReport();
         return ResponseEntity.ok(report);
     }
+
+    /**
+     * Simple HTML view for Equipment Usage Analytics
+     */
+    @GetMapping(value = "/usage/ui", produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> getEquipmentUsageAnalyticsHtml() {
+        EquipmentUsageAnalyticsDTO report = reportService.generateEquipmentUsageAnalyticsReport();
+        StringBuilder html = new StringBuilder();
+
+        html.append("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">");
+        html.append("<title>Equipment Usage Analytics</title>");
+        html.append("<style>");
+        html.append("body{font-family:'Segoe UI',sans-serif;background:#f4f5fb;padding:20px;}");
+        html.append(".card{max-width:900px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.08);padding:24px;}");
+        html.append("h1{margin-bottom:8px;color:#2d3e50;}");
+        html.append(".subtitle{color:#6c757d;margin-bottom:20px;}");
+        html.append("table{border-collapse:collapse;width:100%;margin-top:12px;}");
+        html.append("th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #e5e7eb;}");
+        html.append("th{background:#f3f4ff;color:#374151;}");
+        html.append("</style></head><body>");
+
+        html.append("<div class=\"card\">");
+        html.append("<h1>Equipment Usage Analytics</h1>");
+        html.append("<div class=\"subtitle\">Generated on ").append(report.getGeneratedDate()).append("</div>");
+
+        html.append("<h2>Overall Statistics</h2>");
+        html.append("<ul>");
+        html.append("<li>Total Machines: ").append(report.getTotalMachines()).append("</li>");
+        html.append("<li>Total Capacity: ").append(report.getTotalCapacity()).append(" bookings</li>");
+        html.append("<li>Total Bookings: ").append(report.getTotalBookings()).append("</li>");
+        html.append("<li>Average Utilization Rate: ")
+            .append(String.format("%.1f", report.getAverageUtilizationRate())).append("%</li>");
+        html.append("</ul>");
+
+        html.append("<h2 style=\"margin-top:24px;\">Capacity Distribution</h2>");
+        html.append("<table><thead><tr><th>Category</th><th>Count</th><th>Percentage</th></tr></thead><tbody>");
+        double withBookingsPct = report.getCapacityDistribution().getOrDefault("with_bookings", 0.0);
+        double fullyBookedPct = report.getCapacityDistribution().getOrDefault("fully_booked", 0.0);
+        double unusedPct = report.getCapacityDistribution().getOrDefault("unused", 0.0);
+        html.append("<tr><td>With bookings</td><td>").append(report.getMachinesWithBookings())
+            .append("</td><td>").append(String.format("%.1f", withBookingsPct)).append("%</td></tr>");
+        html.append("<tr><td>Fully booked</td><td>").append(report.getMachinesFullyBooked())
+            .append("</td><td>").append(String.format("%.1f", fullyBookedPct)).append("%</td></tr>");
+        html.append("<tr><td>Unused</td><td>").append(report.getMachinesUnused())
+            .append("</td><td>").append(String.format("%.1f", unusedPct)).append("%</td></tr>");
+        html.append("</tbody></table>");
+
+        html.append("<h2 style=\"margin-top:24px;\">Machine Utilization</h2>");
+        html.append("<table><thead><tr><th>Machine</th><th>Bookings</th><th>Utilization</th></tr></thead><tbody>");
+        report.getMachineUtilization().forEach((machine, utilization) -> {
+            int bookings = report.getMachineBookingCount().getOrDefault(machine, 0);
+            html.append("<tr><td>").append(machine).append("</td><td>").append(bookings)
+                .append("</td><td>").append(String.format("%.1f", utilization)).append("%</td></tr>");
+        });
+        html.append("</tbody></table>");
+
+        html.append("</div></body></html>");
+
+        return ResponseEntity.ok(html.toString());
+    }
     
     // Export endpoints
     @GetMapping(value = "/usage/export/json", produces = MediaType.APPLICATION_JSON_VALUE)
