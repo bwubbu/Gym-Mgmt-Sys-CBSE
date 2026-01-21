@@ -40,15 +40,21 @@ public class TestClient implements BundleActivator {
         System.out.println("\n=========================================");
         System.out.println("OSGi Test Client - Tests Complete");
         System.out.println("=========================================\n");
-        
-        // Optional: Start interactive demo if enabled
-        // To enable: Set system property -Dinteractive.demo=true
-        // Or uncomment the line below
-        String interactiveMode = System.getProperty("interactive.demo", "false");
-        if ("true".equalsIgnoreCase(interactiveMode)) {
-            System.out.println("Starting Interactive Demo Mode...");
-            System.out.println("(To disable, remove -Dinteractive.demo=true from JVM arguments)\n");
-            new InteractiveReportDemo(context).startInteractiveMenu();
+
+        // Register Gogo shell commands for interactive demos
+        // This avoids conflict with the Gogo shell's own console handling
+        try {
+            java.util.Hashtable<String, Object> props = new java.util.Hashtable<>();
+            props.put("osgi.command.scope", "gym");
+            props.put("osgi.command.function", new String[] { "machine", "report" });
+            context.registerService(Object.class, new GymCommand(context), props);
+
+            System.out.println("\n✅ Interactive Demos Registered!");
+            System.out.println("   Type 'gym:machine' to start the Machine Management Demo");
+            System.out.println("   Type 'gym:report' to start the Report Analytics Demo");
+
+        } catch (Exception e) {
+            System.err.println("❌ Failed to register gym commands: " + e.getMessage());
         }
     }
 
@@ -501,6 +507,7 @@ public class TestClient implements BundleActivator {
             }
 
             // --- Verify Blocking Booking during Maintenance ---
+            System.out.println();
             System.out.println("--- Testing Maintenance Booking Restriction ---");
 
             // 1. Set maintenance to TODAY
@@ -559,6 +566,7 @@ public class TestClient implements BundleActivator {
             }
 
             // --- Test getUsageStatistics ---
+            System.out.println();
             System.out.println("--- Testing Usage Statistics ---");
             List<com.gymmanagement.osgi.base.dto.MachineUsageStats> stats = machineService.getUsageStatistics();
             if (stats != null && !stats.isEmpty()) {
