@@ -33,6 +33,15 @@ public class Trainer extends Person implements Serializable {
     }
     
     // Getters and Setters
+    public int getRegId() { return this.regId; }
+    public void setRegId(int regId) { this.regId = regId; }
+
+    public String getName() { return this.name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getGender() { return this.gender; }
+    public void setGender(String gender) { this.gender = gender; }
+    
     public String getSpecialization() {
         return specialization;
     }
