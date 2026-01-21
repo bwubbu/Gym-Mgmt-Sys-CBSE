@@ -64,3 +64,9 @@ thumbs.db
 # Project specific
 Gym management system JAVA OOP GUI/MemberFile
 Gym management system JAVA OOP GUI/AdminInfo.txt
+
+# Gym System Data Files
+spring-boot-implementation/member-management-component/member_plans.dat
+spring-boot-implementation/member-management-component/members.dat
+# Gym System Data Files
+spring-boot-implementation/member-management-component/*.dat
