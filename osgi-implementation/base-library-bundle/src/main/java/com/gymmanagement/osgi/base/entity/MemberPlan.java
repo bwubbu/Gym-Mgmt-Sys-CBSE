@@ -1,4 +1,5 @@
-package com.gymmanagement.base.entity;
+package com.gymmanagement.osgi.base.entity;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -6,7 +7,7 @@ public class MemberPlan implements Serializable {
     private static final long serialVersionUID = 1L;
     private String planId;
     private String planName;
-    private String duration;
+    private String duration; 
     private double price;
     private String description;
     private boolean personalTrainerIncluded;
@@ -14,8 +15,7 @@ public class MemberPlan implements Serializable {
     private boolean accessAllMachines;
     private List<String> accessibleMachineIds;
 
-    public MemberPlan() {}
-
+    // Getters and Setters for all fields...
     public String getPlanId() { return planId; }
     public void setPlanId(String planId) { this.planId = planId; }
     public String getPlanName() { return planName; }

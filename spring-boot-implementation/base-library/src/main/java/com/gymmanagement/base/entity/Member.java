@@ -13,18 +13,6 @@ import lombok.EqualsAndHashCode;
 public class Member extends Person implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // private int regId;
-    // private String name;
-    // private String gmail;    // Added directly to fix "symbol not found"
-    // private String phoneNum; // Added directly to fix "symbol not found"
-    // private String address;  // Added directly to fix "symbol not found"
-    // private String gender;
-    
-    // private double height;
-    // private double weight;
-    // private double bmi; // Body Mass index
-    // private Date dateOfJoin;  // Change from String to Date
-    // private Date dateOfBirth; // Change from String to Date
     private Payment memberPayment;
     private String fitnessGoal;    
     private BodyStats bodyStats;
@@ -126,7 +114,9 @@ public class Member extends Person implements Serializable {
     public void setDateOfJoin(Date date) { this.joinDate = date; }
     public Date getDateOfJoin() { return this.joinDate; }
     
+    @Override
     public void setDateOfBirth(Date date) { this.dateOfBirth = date; }
+    @Override
     public Date getDateOfBirth() { return this.dateOfBirth; }
 
     public BodyStats getBodyStats() {

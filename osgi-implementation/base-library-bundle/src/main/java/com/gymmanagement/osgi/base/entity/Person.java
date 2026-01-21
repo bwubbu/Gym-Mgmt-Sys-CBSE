@@ -7,6 +7,8 @@ import java.time.Year;
  * Abstract Person entity for OSGi Base Library Bundle
  */
 public abstract class Person implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     protected int regId;
     protected String name;
     protected String gmail;

@@ -1,11 +1,13 @@
 package com.gymmanagement.osgi.base.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * Date entity for OSGi Base Library Bundle
  */
 public class Date implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int day;
     private int month;
     private int year;
@@ -30,6 +32,21 @@ public class Date implements Serializable {
             return true;
         } 
         return false;
+    }
+
+    public boolean isValidYear(int year) {
+        // Constraints: Not in the far future (20000) and not before gym founded
+        int currentYear = LocalDate.now().getYear();
+        return year >= 1900 && year <= currentYear;
+    }
+
+    public boolean isNotFutureDate() {
+        try {
+            LocalDate inputDate = LocalDate.of(this.year, this.month, this.day);
+            return !inputDate.isAfter(LocalDate.now());
+        } catch (Exception e) {
+            return false;
+        }
     }
     
     public void setDay(int day) {
@@ -59,6 +76,10 @@ public class Date implements Serializable {
     @Override
     public String toString() {
         return month + "/" + day + "/" + year;
+    }
+
+    public LocalDate toLocalDate() {
+        return LocalDate.of(year, month, day);
     }
 }
 
