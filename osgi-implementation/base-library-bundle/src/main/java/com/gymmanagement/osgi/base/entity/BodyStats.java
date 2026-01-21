@@ -28,7 +28,7 @@ public class BodyStats implements Serializable {
         calculateBMI();
     }
 
-    private void calculateBMI() {
+    public final void calculateBMI() {
         if (height > 0) {
             // Formula: weight (kg) / [height (m)]^2
             this.bmi = weight / (height * height);

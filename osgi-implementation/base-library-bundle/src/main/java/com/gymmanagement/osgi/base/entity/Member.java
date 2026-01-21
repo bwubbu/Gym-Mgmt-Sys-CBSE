@@ -2,6 +2,8 @@ package com.gymmanagement.osgi.base.entity;
 
 // import java.time.LocalDate;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Member entity for OSGi Base Library Bundle
@@ -14,6 +16,12 @@ public class Member extends Person implements Serializable {
     private BodyStats bodyStats;
     private MemberPlan currentPlan;
     private Integer assignedTrainerId;
+    private List<BodyStats> statsHistory = new ArrayList<>(); // UC-4 History
+
+    // Finance info (UC-1 Step 10 & UC-4)
+    private double outstandingBalance;
+    private String ccHolder;
+    private String ccNumber;
     
     public Member() {
         super();
@@ -43,6 +51,37 @@ public class Member extends Person implements Serializable {
         this.currentPlan = currentPlan;
         this.assignedTrainerId = assignedTrainerId;
     }
+
+    // Add this to Member.java in com.gymmanagement.osgi.base.entity
+    public Member(int regId, String name, String gmail, String phoneNum, String address, 
+                Date joinDate, Date dateOfBirth, int age, String gender, 
+                double height, double weight, Payment memberPayment, String fitnessGoal) {
+        
+        // 1. Initialize parent Person fields
+        super(regId, name, gmail, phoneNum, address, joinDate, dateOfBirth, age, gender);
+        
+        // 2. Wrap the height/weight into the new BodyStats object
+        this.bodyStats = new BodyStats();
+        this.bodyStats.setHeight(height);
+        this.bodyStats.setWeight(weight);
+        this.bodyStats.calculateBMI();
+        
+        // 3. Set remaining fields
+        this.memberPayment = memberPayment;
+        this.fitnessGoal = fitnessGoal;
+        
+        // 4. Initialize defaults for other OSGi-specific fields
+        this.statsHistory = new ArrayList<>();
+        this.currentPlan = new MemberPlan();
+    }
+
+    // UC-3 Logic: Save old stats to history before updating current
+    public void recordNewStats(BodyStats stats) {
+        if (this.bodyStats != null) {
+            this.statsHistory.add(this.bodyStats);
+        }
+        this.bodyStats = stats;
+    }
     
     // public void setHeight(double height) {
     //     this.height = height;
@@ -63,6 +102,20 @@ public class Member extends Person implements Serializable {
     // public void setBmi(double bmi) {
     //     this.bmi = bmi;
     // }
+
+    public double getOutstandingBalance() { return outstandingBalance; }
+    public void setOutstandingBalance(double bal) { this.outstandingBalance = bal; }
+    public String getCcHolder() { return ccHolder; }
+    public void setCcHolder(String holder) { this.ccHolder = holder; }
+    public String getCcNumber() { return ccNumber; }
+    public void setCcNumber(String num) { this.ccNumber = num; }
+    // public MemberPlan getCurrentPlan() { return currentPlan; }
+    // public void setCurrentPlan(MemberPlan plan) { this.currentPlan = plan; }
+    public List<BodyStats> getStatsHistory() { return statsHistory; }
+    // public BodyStats getBodyStats() { return bodyStats; }
+    // public void setBodyStats(BodyStats stats) { this.bodyStats = stats; }
+    // public Integer getAssignedTrainerId() { return assignedTrainerId; }
+    // public void setAssignedTrainerId(Integer id) { this.assignedTrainerId = id; }
     
     public void setPayment(Payment memberPayment) {
         this.memberPayment = memberPayment;

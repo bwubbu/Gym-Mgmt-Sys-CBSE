@@ -21,9 +21,9 @@ public class BodyStats implements Serializable {
     public double getBodyFatPercentage() { return bodyFatPercentage; }
     public void setBodyFatPercentage(double bodyFatPercentage) { this.bodyFatPercentage = bodyFatPercentage; }
 
-    private void calculateBMI() {
+    public final void calculateBMI() {
         if (height > 0) {
-            // Since height is ALREADY in meters, use it directly
+            // Formula: weight (kg) / [height (m)]^2
             this.bmi = weight / (height * height);
         }
     }
