@@ -8,7 +8,7 @@ public class BodyStats implements Serializable {
     private double weight; // in kg
     private double bmi;
     private double bodyFatPercentage;
-    private LocalDate recordDate;
+    private LocalDate recordDate = java.time.LocalDate.now();;
 
     public BodyStats() {}
 

@@ -15,7 +15,7 @@ public class Member extends Person implements Serializable {
     private String fitnessGoal;    
     private BodyStats bodyStats;
     private MemberPlan currentPlan;
-    private Integer assignedTrainerId;
+    private int assignedTrainerId;
     private List<BodyStats> statsHistory = new ArrayList<>(); // UC-4 History
 
     // Finance info (UC-1 Step 10 & UC-4)
@@ -29,27 +29,28 @@ public class Member extends Person implements Serializable {
         this.bodyStats = new BodyStats();
         this.memberPayment = new Payment();
         this.currentPlan = new MemberPlan();
-        this.assignedTrainerId = null;
+        this.assignedTrainerId = 0;
     }
-    
-    // public Member(int regId, String name, String gmail, String phoneNum, String address, 
-    //               Date joinDate, Date dateOfBirth, int age, String gender, 
-    //               double height, double weight, Payment memberPayment, String fitnessGoal) {
-    //     super(regId, name, gmail, phoneNum, address, joinDate, dateOfBirth, age, gender);
-    //     this.memberPayment = memberPayment;
-    //     this.fitnessGoal = fitnessGoal;
-    // }
 
-    public Member(int regId, String name, String gmail, String phoneNum, String address, Date joinDate,
-                  Date dateOfBirth, int age, String gender, double height, double weight, 
-                  Payment memberPayment, String fitnessGoal, BodyStats bodyStats, 
-                  MemberPlan currentPlan, Integer assignedTrainerId) { // Added to parameter list
+    public Member(int regId, String name, String gmail, String phoneNum, String address, 
+                Date joinDate, Date dateOfBirth, int age, String gender, double height, 
+                double weight, Payment payment, String fitnessGoal, BodyStats bodyStats, 
+                MemberPlan plan, Integer trainerId) {
+        
         super(regId, name, gmail, phoneNum, address, joinDate, dateOfBirth, age, gender);
-        this.memberPayment = memberPayment;
-        this.fitnessGoal = fitnessGoal;
+        
+        this.memberPayment = payment;
         this.bodyStats = bodyStats;
-        this.currentPlan = currentPlan;
-        this.assignedTrainerId = assignedTrainerId;
+        this.currentPlan = plan;
+        this.assignedTrainerId = trainerId;
+        this.fitnessGoal = fitnessGoal;
+
+        // CRITICAL: Copy data to Member fields so viewProfile can see them
+        if (payment != null) {
+            this.ccHolder = payment.getCreditCardAccountHolder();
+            this.ccNumber = payment.getCreditCardNum();
+            this.outstandingBalance = payment.getOutstandingBalance();
+        }
     }
 
     // Add this to Member.java in com.gymmanagement.osgi.base.entity
@@ -76,32 +77,26 @@ public class Member extends Person implements Serializable {
     }
 
     // UC-3 Logic: Save old stats to history before updating current
-    public void recordNewStats(BodyStats stats) {
-        if (this.bodyStats != null) {
-            this.statsHistory.add(this.bodyStats);
+    public void recordNewStats(BodyStats newStats) {
+        if (this.statsHistory == null) {
+            this.statsHistory = new ArrayList<>();
         }
-        this.bodyStats = stats;
+
+        // CREATE A SNAPSHOT: Copy the values into a NEW object
+        // This stops the "all records are the same" bug
+        BodyStats snapshot = new BodyStats(
+            newStats.getHeight(), 
+            newStats.getWeight(), 
+            newStats.getBodyFatPercentage()
+        );
+        snapshot.calculateBMI();
+        
+        // Add the independent snapshot to history
+        this.statsHistory.add(snapshot);
+        
+        // Update current stats field
+        this.bodyStats = snapshot; 
     }
-    
-    // public void setHeight(double height) {
-    //     this.height = height;
-    // }
-    
-    // public double getHeight() {
-    //     return height;
-    // }
-    
-    // public void setWeight(double weight) {
-    //     this.weight = weight;
-    // }
-    
-    // public double getWeight() {
-    //     return weight;
-    // }
-    
-    // public void setBmi(double bmi) {
-    //     this.bmi = bmi;
-    // }
 
     public double getOutstandingBalance() { return outstandingBalance; }
     public void setOutstandingBalance(double bal) { this.outstandingBalance = bal; }
@@ -109,13 +104,8 @@ public class Member extends Person implements Serializable {
     public void setCcHolder(String holder) { this.ccHolder = holder; }
     public String getCcNumber() { return ccNumber; }
     public void setCcNumber(String num) { this.ccNumber = num; }
-    // public MemberPlan getCurrentPlan() { return currentPlan; }
-    // public void setCurrentPlan(MemberPlan plan) { this.currentPlan = plan; }
+
     public List<BodyStats> getStatsHistory() { return statsHistory; }
-    // public BodyStats getBodyStats() { return bodyStats; }
-    // public void setBodyStats(BodyStats stats) { this.bodyStats = stats; }
-    // public Integer getAssignedTrainerId() { return assignedTrainerId; }
-    // public void setAssignedTrainerId(Integer id) { this.assignedTrainerId = id; }
     
     public void setPayment(Payment memberPayment) {
         this.memberPayment = memberPayment;
@@ -162,11 +152,11 @@ public class Member extends Person implements Serializable {
         this.currentPlan = currentPlan;
     }
 
-    public Integer getAssignedTrainerId() {
+    public int getAssignedTrainerId() {
         return assignedTrainerId;
     }
 
-    public void setAssignedTrainerId(Integer assignedTrainerId) {
+    public void setAssignedTrainerId(int assignedTrainerId) {
         this.assignedTrainerId = assignedTrainerId;
     }
     
@@ -177,6 +167,11 @@ public class Member extends Person implements Serializable {
                     memberPayment.toString();
         }
         return "\n\t\tNo payment information available for " + name + " (ID: " + regId + ")\n";
+    }
+
+    // Logic to update history (UC-3 & UC-4)
+    public void addStatsToHistory(BodyStats stats) {
+        this.statsHistory.add(stats);
     }
 
     // Validation methods
@@ -210,15 +205,6 @@ public class Member extends Person implements Serializable {
         }
         return true;
     }
-    
-    // @Override
-    // public String toString() {
-    //     return super.toString() + "\n\n> Height : " + height + " m\n\n> Weight : " + weight + 
-    //             " kg\n\n> BMI : " + String.format("%.2f", getBmi()) + 
-    //             "\n\n> Fitness Goal : " + fitnessGoal + 
-    //             (memberPayment != null ? "\n" + memberPayment.toString() : "") +
-    //             "\n---------------------------------------------------------------\n";
-    // }
 
     @Override
     public String toString() {
@@ -237,7 +223,7 @@ public class Member extends Person implements Serializable {
                 "\n\n> Outstanding Balance : " + (memberPayment != null ? memberPayment.getOutstandingBalance() : "N/A")
                 + "\n\n> Fitness Goal : " + (fitnessGoal != null ? fitnessGoal : "N/A") +
                 "\n\n> Current Plan : " + planInfo +
-                "\n\n> Assigned Trainer ID : " + (assignedTrainerId != null ? assignedTrainerId : "None") +
+                "\n\n> Assigned Trainer ID : " + (assignedTrainerId != 0 ? assignedTrainerId : "None")  +
                 "\n\n> Accessible Machine IDs : " + machines +
                 "\n---------------------------------------------------------------\n";
     }

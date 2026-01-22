@@ -253,6 +253,10 @@ public class GymTerminalApp implements CommandLineRunner {
         double h = Double.parseDouble(scanner.nextLine());
         stats.setHeight(h);
 
+        System.out.print("Body Fat %: ");
+        double fat = Double.parseDouble(scanner.nextLine());
+        stats.setBodyFatPercentage(fat);
+
         // AUTO-CALCULATE BMI: weight / (height * height)
         if (h > 0) {
             double calculatedBmi = w / (h * h);
@@ -303,6 +307,7 @@ public class GymTerminalApp implements CommandLineRunner {
     // --- UC-1: MODIFY MEMBER (Alternative Flow) ---
     private void modifyMemberFlow() {
         System.out.print("Enter Registration ID to Modify (or 'cancel'): ");
+        // BodyStats stats = m.getBodyStats() != null ? m.getBodyStats() : new BodyStats();
         String input = scanner.nextLine();
         if (input.equalsIgnoreCase("cancel")) return;
 
@@ -351,6 +356,10 @@ public class GymTerminalApp implements CommandLineRunner {
             System.out.print("New Height m (current: " + stats.getHeight() + "): ");
             String hIn = scanner.nextLine();
             if (!hIn.isEmpty()) stats.setHeight(Double.parseDouble(hIn));
+
+            System.out.print("New Body Fat % (current: " + stats.getBodyFatPercentage() + "): ");
+            String fIn = scanner.nextLine();
+            if (!fIn.isEmpty()) stats.setBodyFatPercentage(Double.parseDouble(fIn));
             
             if (stats.getHeight() > 0) stats.setBmi(stats.getWeight() / (stats.getHeight() * stats.getHeight()));
             m.setBodyStats(stats);
@@ -437,8 +446,11 @@ public class GymTerminalApp implements CommandLineRunner {
             System.out.println("Fitness Goal    : " + (m.getFitnessGoal() != null ? m.getFitnessGoal() : "N/A"));
             
             System.out.println("\n--- Body Statistics ---");
-            System.out.printf("Weight: %.1f kg | Height: %.2f m | BMI: %.2f\n", 
-                m.getBodyStats().getWeight(), m.getBodyStats().getHeight(), m.getBodyStats().getBmi());
+            System.out.printf("Weight: %.1f kg | Height: %.2f m | Body Fat: %.2f%% | BMI: %.2f\n", 
+                m.getBodyStats().getWeight(), 
+                m.getBodyStats().getHeight(), 
+                m.getBodyStats().getBodyFatPercentage(), 
+                m.getBodyStats().getBmi());
 
             System.out.println("\n--- Plan Details ---");
             if (m.getCurrentPlan() != null) {
@@ -836,23 +848,118 @@ public class GymTerminalApp implements CommandLineRunner {
             String choice = scanner.nextLine();
 
             if (choice.equals("1")) {
-                BodyStats stats = new BodyStats();
-                System.out.print("Weight (kg): "); stats.setWeight(Double.parseDouble(scanner.nextLine()));
-                System.out.print("Height (m): "); stats.setHeight(Double.parseDouble(scanner.nextLine()));
-                memberService.updateBodyStats(m.getRegId(), stats);
-                System.out.println("[SUCCESS] Stats updated.");
+                updateBodyStatsFlow(m);
             } else if (choice.equals("2")) {
                 viewProfileFlow(m.getRegId());
             } else break;
         }
     }
 
+    private void updateBodyStatsFlow(Member m) {
+        System.out.println("\n--- UC-3: UPDATE BODY STATS ---");
+        System.out.println("1. Update All Fields");
+        System.out.println("2. Update Specific Field");
+        System.out.print("Choice: ");
+        String subChoice = scanner.nextLine();
+
+        // Get a copy of latest stats to modify
+        BodyStats latest = m.getLatestStats();
+        BodyStats newEntry = new BodyStats(); 
+        newEntry.setWeight(latest.getWeight());
+        newEntry.setHeight(latest.getHeight());
+        newEntry.setBodyFatPercentage(latest.getBodyFatPercentage());
+
+        if (subChoice.equals("1")) {
+            System.out.print("Enter Weight (kg): "); newEntry.setWeight(Double.parseDouble(scanner.nextLine()));
+            System.out.print("Enter Height (m): "); newEntry.setHeight(Double.parseDouble(scanner.nextLine()));
+            System.out.print("Enter Body Fat %: "); newEntry.setBodyFatPercentage(Double.parseDouble(scanner.nextLine()));
+        } else {
+            System.out.println("1. Weight | 2. Height | 3. Body Fat %");
+            System.out.print("Select field to update: ");
+            String field = scanner.nextLine();
+            System.out.print("Enter new value: ");
+            double val = Double.parseDouble(scanner.nextLine());
+            
+            if (field.equals("1")) newEntry.setWeight(val);
+            else if (field.equals("2")) newEntry.setHeight(val);
+            else if (field.equals("3")) newEntry.setBodyFatPercentage(val);
+        }
+
+        // Recalculate BMI and Save
+        if (newEntry.getHeight() > 0) {
+            newEntry.setBmi(newEntry.getWeight() / (newEntry.getHeight() * newEntry.getHeight()));
+        }
+        
+        // This will append to the list in your Service/Repo
+        memberService.updateBodyStats(m.getRegId(), newEntry);
+        System.out.println("[SUCCESS] New record added to your history.");
+    }
+
     private void viewProfileFlow(int id) {
         MemberProfileDTO profile = memberService.getMemberProfile(id);
-        System.out.println("\n=== PROFILE SUMMARY ===");
-        System.out.println("Name: " + profile.getMember().getName());
-        System.out.println("Outstanding: $" + profile.getOutstandingBalance());
-        System.out.println("Trainer: " + profile.getTrainerName());
-        System.out.println("=========================");
+        if (profile == null || profile.getMember() == null) {
+            System.out.println("[!] ERROR: Could not retrieve profile.");
+            return;
+        }
+        
+        Member m = profile.getMember();
+
+        System.out.println("\n==================== FULL MEMBER PROFILE ====================");
+        
+        // --- Section 1: Personal Details ---
+        System.out.println("Registration ID : " + m.getRegId());
+        System.out.println("Name            : " + m.getName());
+        System.out.println("Email           : " + m.getGmail());
+        System.out.println("Phone Number    : " + m.getPhoneNum());
+        System.out.println("Address         : " + m.getAddress());
+        System.out.println("Gender / Age    : " + m.getGender() + " / " + m.getAge() + " years old");
+        System.out.println("Date of Birth   : " + (m.getDateOfBirth() != null ? m.getDateOfBirth() : "N/A"));
+        System.out.println("Joining Date    : " + (m.getJoinDate() != null ? m.getJoinDate() : "N/A"));
+        System.out.println("Fitness Goal    : " + (m.getFitnessGoal() != null ? m.getFitnessGoal() : "N/A"));
+
+        // --- Section 2: Body Statistics History (UC-3/4) ---
+        System.out.println("\n--- Body Stats History ---");
+        System.out.printf("%-12s | %-8s | %-8s | %-10s | %-8s\n", "Date", "Weight", "Height", "Fat %", "BMI");
+        System.out.println("------------------------------------------------------------");
+        
+        List<BodyStats> history = m.getBodyStatsHistory() != null ? m.getBodyStatsHistory() : new ArrayList<>();
+        if (history.isEmpty()) {
+            System.out.println("          No history records found.");
+        } else {
+            for (BodyStats s : history) {
+                String dateStr = (s.getRecordDate() != null) ? s.getRecordDate().toString() : "N/A";
+                System.out.printf("%-12s | %-8.1f | %-8.2f | %-10.1f | %-8.2f\n",
+                    dateStr, s.getWeight(), s.getHeight(), s.getBodyFatPercentage(), s.getBmi());
+            }
+        }
+
+        // --- Section 3: Plan & Machines (With Names) ---
+        System.out.println("\n--- Plan Details ---");
+        if (m.getCurrentPlan() != null) {
+            System.out.println("Current Plan    : " + m.getCurrentPlan().getPlanId() + " (" + m.getCurrentPlan().getPlanName() + ")");
+            System.out.print("Machine Access  : ");
+            if (profile.getAccessibleMachineDetails() != null) {
+                System.out.println(String.join(", ", profile.getAccessibleMachineDetails()));
+            } else {
+                System.out.println("No Access Details Found");
+            }
+        } else {
+            System.out.println("Current Plan    : None Assigned");
+        }
+
+        // --- Section 4: Trainer & Finance ---
+        System.out.println("\n--- Assignment & Finance ---");
+        System.out.println("Assigned Trainer: " + profile.getTrainerName());
+        System.out.println("Pending Balance : $" + profile.getOutstandingBalance());
+        
+        if (m.getPayment() != null) {
+            Payment pay = m.getPayment();
+            System.out.println("Card Holder     : " + (pay.getCreditCardAccountHolder() != null ? pay.getCreditCardAccountHolder() : "N/A"));
+            System.out.println("Card Number     : " + (pay.getCreditCardNum() != null ? pay.getCreditCardNum() : "N/A"));
+        } else {
+            System.out.println("Payment Info    : No card on file");
+        }
+        
+        System.out.println("=============================================================");
     }
 }

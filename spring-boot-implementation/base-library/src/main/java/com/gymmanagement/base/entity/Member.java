@@ -1,6 +1,9 @@
 package com.gymmanagement.base.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,11 +16,12 @@ import lombok.EqualsAndHashCode;
 public class Member extends Person implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Payment memberPayment;
+    private Payment memberPayment = new Payment();
     private String fitnessGoal;    
-    private BodyStats bodyStats;
-    private MemberPlan currentPlan;
+    private BodyStats bodyStats = new BodyStats();
+    private MemberPlan currentPlan = new MemberPlan();
     private Integer assignedTrainerId; // Added for UC-1 Step 9.2
+    private List<BodyStats> bodyStatsHistory = new ArrayList<>();
     
     public Member() {
         super();
@@ -25,6 +29,7 @@ public class Member extends Person implements Serializable {
         // weight = 0.0;
         // bmi = 0.0;
         fitnessGoal = null;
+        this.bodyStatsHistory = new ArrayList<>();
         this.bodyStats = new BodyStats();
         this.memberPayment = new Payment();
         this.currentPlan = new MemberPlan();
@@ -127,6 +132,14 @@ public class Member extends Person implements Serializable {
         this.bodyStats = bodyStats;
     }
 
+    public List<BodyStats> getBodyStatsHistory() {
+        return bodyStatsHistory;
+    }
+
+    public void setBodyStatsHistory(List<BodyStats> bodyStatsHistory) {
+        this.bodyStatsHistory = bodyStatsHistory;
+    }
+
     public MemberPlan getCurrentPlan() {
         return currentPlan;
     }
@@ -142,6 +155,14 @@ public class Member extends Person implements Serializable {
     public void setAssignedTrainerId(Integer assignedTrainerId) {
         this.assignedTrainerId = assignedTrainerId;
     }
+
+    // public List<BodyStats> getBodyStatsHistory() {
+    //     return bodyStatsHistory;
+    // }
+
+    // public void setBodyStatsHistory(List<BodyStats> bodyStatsHistory) {
+    //     this.bodyStatsHistory = bodyStatsHistory;
+    // }
     
     @Override
     public String getFinancialReport() {
@@ -179,6 +200,14 @@ public class Member extends Person implements Serializable {
             return false;
         }
         return true;
+    }
+
+    // Helper to get the most recent record from history
+    public BodyStats getLatestStats() {
+        if (bodyStatsHistory == null || bodyStatsHistory.isEmpty()) {
+            return bodyStats != null ? bodyStats : new BodyStats();
+        }
+        return bodyStatsHistory.get(bodyStatsHistory.size() - 1);
     }
 
     // @Override

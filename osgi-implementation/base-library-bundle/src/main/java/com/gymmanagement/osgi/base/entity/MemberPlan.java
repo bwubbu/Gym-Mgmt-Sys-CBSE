@@ -1,6 +1,7 @@
 package com.gymmanagement.osgi.base.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MemberPlan implements Serializable {
@@ -14,6 +15,44 @@ public class MemberPlan implements Serializable {
     private boolean lockerAccess;
     private boolean accessAllMachines;
     private List<String> accessibleMachineIds;
+
+    public MemberPlan() {}
+
+    // Multi-parameter constructor
+    public MemberPlan(String planId, String planName, String duration, double price, 
+                      String description, boolean accessAllMachines, 
+                      boolean personalTrainerIncluded, boolean lockerAccess) {
+        this.planId = planId;
+        this.planName = planName;
+        this.duration = duration;
+        this.price = price;
+        this.description = description;
+        this.accessAllMachines = accessAllMachines;
+        this.personalTrainerIncluded = personalTrainerIncluded;
+        this.lockerAccess = lockerAccess;
+    }
+
+    // ADD THIS CONSTRUCTOR:
+    public MemberPlan(String planId, String planName, String duration, double price, 
+                      String description, boolean personalTrainerIncluded, boolean locker, 
+                      boolean allMach, String machIds) {
+        this.planId = planId;
+        this.planName = planName;
+        this.duration = duration;
+        this.price = price;
+        this.description = description;
+        this.personalTrainerIncluded = personalTrainerIncluded;
+        this.lockerAccess = locker;
+        this.accessAllMachines = allMach;
+        
+        // Convert the comma-separated String into a List
+        this.accessibleMachineIds = new ArrayList<>();
+        if (machIds != null && !machIds.isEmpty()) {
+            for (String id : machIds.split(",")) {
+                this.accessibleMachineIds.add(id.trim());
+            }
+        }
+    }
 
     // Getters and Setters for all fields...
     public String getPlanId() { return planId; }

@@ -5,6 +5,7 @@ import com.gymmanagement.osgi.base.entity.Member;
 import java.util.List;
 
 import com.gymmanagement.osgi.base.entity.BodyStats;
+import com.gymmanagement.osgi.base.entity.MemberPlan;
 
 /**
  * OSGi service interface for Member Management
@@ -53,5 +54,10 @@ public interface IMemberService {
 
     // UC-3: Specifically for members to update their progress history
     String updateBodyStats(int regId, BodyStats newStats);
+
+    void addMemberPlan(MemberPlan plan);
+    List<MemberPlan> getAllMemberPlans();
+    String deleteMemberPlan(String planId);
+    void deleteAllData();
 }
 

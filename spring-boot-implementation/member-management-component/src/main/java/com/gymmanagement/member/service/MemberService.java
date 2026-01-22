@@ -40,6 +40,11 @@ public class MemberService implements IMemberService {
             // Logic to tell finance to add balance would go here
             member.getPayment().setOutstandingBalance(member.getCurrentPlan().getPrice());
         }
+
+        if (member.getBodyStatsHistory().isEmpty() && member.getBodyStats() != null) {
+            member.getBodyStatsHistory().add(member.getBodyStats());
+        }
+
         return memberRepository.save(member);
     }
 
@@ -90,6 +95,11 @@ public class MemberService implements IMemberService {
         
         // 3. Set the data inside the stats object
         stats.setBmi(bmi);
+
+        if (member.getBodyStatsHistory() == null) {
+            member.setBodyStatsHistory(new ArrayList<>());
+        }
+        member.getBodyStatsHistory().add(stats);
         
         // 4. Update the member's bodyStats object
         member.setBodyStats(stats);
@@ -111,30 +121,86 @@ public class MemberService implements IMemberService {
         return profile;
     }
 
+    // @Override
+    // public MemberProfileDTO getMemberProfile(int id) {
+    //     Member member = memberRepository.findById(id)
+    //             .map(obj -> (Member) obj) 
+    //             .orElseThrow(() -> new RuntimeException("Member not found"));
+
+    //     MemberProfileDTO dto = new MemberProfileDTO();
+    //     dto.setMember(member);
+
+    //     // UC-4: Aggregate external data
+    //     // profile.setOutstandingBalance(dataService.getOutstandingBalance(id));
+    //     if (member.getPayment() != null) {
+    //         dto.setOutstandingBalance(member.getPayment().getOutstandingBalance());
+    //     } else {
+    //         dto.setOutstandingBalance(0.0);
+    //     }
+    //     dto.setTrainerName(dataService.getTrainerName(member.getAssignedTrainerId()));
+        
+    //     // UC-4: List accessible machines from the Member's Plan
+    //     // 2. Map Machine IDs to Names
+    //     List<String> machineDetails = new ArrayList<>();
+    //     if (m.getCurrentPlan() != null) {
+    //         if (m.getCurrentPlan().isAccessAllMachines()) {
+    //             machineDetails.add("All Machines");
+    //         } else {
+    //             // Fetch the latest machine list from DataService
+    //             List<Machine> allMachines = dataService.getAllMachines();
+                
+    //             for (String mid : m.getCurrentPlan().getAccessibleMachineIds()) {
+    //                 String name = allMachines.stream()
+    //                     .filter(mac -> String.valueOf(mac.getRegId()).equals(mid))
+    //                     .map(Machine::getName)
+    //                     .findFirst()
+    //                     .orElse("Unknown Machine");
+                    
+    //                 machineDetails.add(mid + " (" + name + ")");
+    //             }
+    //         }
+    //     }
+    //     dto.setAccessibleMachineDetails(machineDetails);
+
+    //     return dto;
+    // }
+
     @Override
-    public MemberProfileDTO getMemberProfile(int id) {
-        Member member = memberRepository.findById(id)
-                .map(obj -> (Member) obj) 
+    public MemberProfileDTO getMemberProfile(int regId) {
+        Member member = memberRepository.findById(regId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        MemberProfileDTO profile = new MemberProfileDTO();
-        profile.setMember(member);
-
-        // UC-4: Aggregate external data
-        // profile.setOutstandingBalance(dataService.getOutstandingBalance(id));
-        if (member.getPayment() != null) {
-            profile.setOutstandingBalance(member.getPayment().getOutstandingBalance());
-        } else {
-            profile.setOutstandingBalance(0.0);
-        }
-        profile.setTrainerName(dataService.getTrainerName(member.getAssignedTrainerId()));
+        MemberProfileDTO dto = new MemberProfileDTO();
+        dto.setMember(member);
         
-        // UC-4: List accessible machines from the Member's Plan
-        if (member.getCurrentPlan() != null) {
-            profile.setAccessibleMachines(member.getCurrentPlan().getAccessibleMachineIds());
+        // Fetch external data via DataService
+        // dto.setOutstandingBalance(dataService.getOutstandingBalance(regId));
+        if (member.getPayment() != null) {
+            dto.setOutstandingBalance(member.getPayment().getOutstandingBalance());
+        } else {
+            dto.setOutstandingBalance(0.0);
         }
+        dto.setTrainerName(dataService.getTrainerName(member.getAssignedTrainerId()));
 
-        return profile;
+        // Map Machine IDs to Names for the DTO
+        List<String> machineDetails = new ArrayList<>();
+        if (member.getCurrentPlan() != null) {
+            if (member.getCurrentPlan().isAccessAllMachines()) {
+                machineDetails.add("All Machines");
+            } else {
+                List<Machine> allMachines = dataService.getAllMachines();
+                for (String mid : member.getCurrentPlan().getAccessibleMachineIds()) {
+                    String name = allMachines.stream()
+                            .filter(mac -> String.valueOf(mac.getRegId()).equals(mid))
+                            .map(Machine::getName)
+                            .findFirst().orElse("Unknown");
+                    machineDetails.add(mid + " (" + name + ")");
+                }
+            }
+        }
+        dto.setAccessibleMachineDetails(machineDetails);
+
+        return dto;
     }
 
     // Fix findById by ensuring the ID is treated as an Integer object

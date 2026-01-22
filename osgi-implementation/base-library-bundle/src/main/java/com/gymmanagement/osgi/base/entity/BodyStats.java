@@ -9,7 +9,7 @@ public class BodyStats implements Serializable {
     private double weight; // in kg
     private double bodyFatPercentage;
     private double bmi;
-    private LocalDate recordDate;
+    private String recordDate;
 
     public BodyStats() {}
 
@@ -24,8 +24,9 @@ public class BodyStats implements Serializable {
         this.height = height;
         this.weight = weight;
         this.bodyFatPercentage = bodyFatPercentage;
-        this.recordDate = LocalDate.now();
         calculateBMI();
+        // Automatically set to current date
+        this.recordDate = java.time.LocalDate.now().toString();
     }
 
     public final void calculateBMI() {
@@ -45,6 +46,5 @@ public class BodyStats implements Serializable {
         calculateBMI(); 
     }
 
-    // Getters...
-    public LocalDate getRecordDate() { return recordDate; }
+    public String getRecordDate() { return recordDate; }
 }
