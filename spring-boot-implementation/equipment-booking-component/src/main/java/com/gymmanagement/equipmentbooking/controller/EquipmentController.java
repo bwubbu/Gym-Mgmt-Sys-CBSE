@@ -31,8 +31,37 @@ public class EquipmentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Machine>> getAllMachines() {
-        return ResponseEntity.ok(bookingService.getAllMachines());
+    public ResponseEntity<List<MachineWithStatus>> getAllMachines() {
+        List<Machine> machines = bookingService.getAllMachines();
+        List<MachineWithStatus> enriched = machines.stream().map(m -> {
+            List<com.gymmanagement.base.entity.Maintenance> maintenance = bookingService.getMaintenanceByMachine(m.getRegId());
+            // Filter for active/future maintenance only to ensure UI badge is accurate
+            java.time.LocalDate today = java.time.LocalDate.now();
+            List<com.gymmanagement.base.entity.Maintenance> active = maintenance.stream().filter(r -> {
+                if (r.getEndDate() == null) return false;
+                java.time.LocalDate end = r.getEndDate().toLocalDate();
+                return !end.isBefore(today);
+            }).collect(java.util.stream.Collectors.toList());
+            
+            return new MachineWithStatus(m, active);
+        }).collect(java.util.stream.Collectors.toList());
+        
+        return ResponseEntity.ok(enriched);
+    }
+
+    // DTO Helper
+    public static class MachineWithStatus extends Machine {
+        private List<com.gymmanagement.base.entity.Maintenance> maintenanceSchedule;
+
+        public MachineWithStatus(Machine m, List<com.gymmanagement.base.entity.Maintenance> maintenanceSchedule) {
+            super(m.getRegId(), m.getName(), m.getBrand(), m.getModel(), m.getMaxWeightCapacity(), m.getMachineWeight(), m.getType());
+            this.setBookings(m.getBookings());
+            this.maintenanceSchedule = maintenanceSchedule;
+        }
+
+        public List<com.gymmanagement.base.entity.Maintenance> getMaintenanceSchedule() {
+            return maintenanceSchedule;
+        }
     }
 
     @GetMapping("/stats")

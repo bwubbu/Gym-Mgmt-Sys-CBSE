@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseFit - Equipment Manager</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #3b82f6;
+            /* Electric Blue */
+            --accent: #10b981;
+            /* Energetic Green */
+            --danger: #ef4444;
+            /* Maintenance/Error */
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            -webkit-text-fill-color: var(--text-main);
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-left: 0.5rem;
+            opacity: 0.8;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-left: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        nav button.active,
+        nav button:hover {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Section Styling */
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #2563eb);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        /* Inventory Grid */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .machine-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .machine-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        /* Glass effect highlight */
+        .machine-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .machine-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .machine-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent);
+        }
+
+        .status-maintenance {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+        }
+
+        .machine-info h3 {
+            margin: 0 0 0.2rem 0;
+            font-size: 1.1rem;
+        }
+
+        .machine-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .machine-actions {
+            margin-top: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-main);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-book {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-book:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-maint {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .btn-maint:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+
+        /* Sidebar */
+        .sidebar-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .progress-bar-bg {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 1.2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            /* to be set by JS */
+            transition: width 1s ease-in-out;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.open .modal {
+            transform: translateY(0);
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+            color: white;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--card-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            transform: translateX(150%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                    d="M18.9 7a8.7 8.7 0 0 1 1.1 5v5a2 2 0 0 1-2 2h-4.2a2 2 0 0 1-2-1.15l-1.3-3.4a3 3 0 0 0-5.7 0l-1.3 3.4A2 2 0 0 1 1.5 19H1a2 2 0 0 1-1-1.7V7.1" />
+                <path d="M8 7V5a4 4 0 0 1 8 0v2" />
+                <circle cx="12" cy="12" r="1" />
+            </svg>
+            Gym Management System
+        </div>
+        <nav>
+            <button class="nav-btn active" onclick="switchTab('inventory')">Equipment</button>
+            <button class="nav-btn" onclick="switchTab('bookings')">Bookings</button>
+            <button class="nav-btn" onclick="switchTab('reports')">Reports</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Main Content: Inventory -->
+        <main>
+            <div id="inventorySection">
+                <div class="section-title">
+                    Machine Inventory
+                    <button class="btn-primary btn-sm" onclick="openAddModal()">+ Add Machine</button>
+                </div>
+
+                <div class="inventory-grid" id="machineList">
+                    <div style="text-align: center; grid-column: 1/-1; padding: 2rem; color: var(--text-secondary);">
+                        Loading machines...
+                    </div>
+                </div>
+            </div>
+
+            <div id="bookingsSection" style="display: none;">
+                <div class="section-title">Active Bookings</div>
+                <div class="sidebar-card" style="width: 100%; box-sizing: border-box;">
+                    <table style="width:100%; border-collapse: collapse; color: var(--text-main);">
+                        <thead>
+                            <tr style="text-align:left; border-bottom: 2px solid rgba(255,255,255,0.1);">
+                                <th style="padding:1rem;">Machine Name</th>
+                                <th style="padding:1rem;">Member Name</th>
+                                <th style="padding:1rem;">Date</th>
+                                <th style="padding:1rem;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingsListBody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="reportsSection" style="display: none;">
+                <div class="section-title">Reports</div>
+                <p style="color: var(--text-secondary)">Report generation usage analytics are currently available via
+                    the OSGi Report component.</p>
+            </div>
+        </main>
+
+        <!-- Sidebar: Stats -->
+        <aside>
+            <div class="section-title">Overview</div>
+
+            <div class="sidebar-card">
+                <h3 style="margin-top:0; font-size:1rem; color:var(--text-secondary)">Utilization Rate</h3>
+                <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;"
+                    id="totalUtil">0%</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="totalUtilBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <h3 style="margin-top:0; font-size:1rem; color:var(--text-secondary); margin-bottom: 0.5rem;">Global
+                    Stats</h3>
+                <div class="stat-row">
+                    <span>Total Machines</span>
+                    <span id="statTotal" style="color:white; font-weight:600">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Under Maintenance</span>
+                    <span id="statMaint" style="color:var(--danger); font-weight:600">0</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="addMachineModal">
+        <div class="modal">
+            <h2>Add New Machine</h2>
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-input" id="mName" placeholder="e.g. Treadmill X1">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <input type="text" class="form-input" id="mType" placeholder="e.g. Cardio">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Brand</label>
+                <input type="text" class="form-input" id="mBrand" placeholder="e.g. TechnoGym">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Model</label>
+                <input type="text" class="form-input" id="mModel" placeholder="e.g. X1000">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-outline" onclick="closeModals()">Cancel</button>
+                <button class="btn-primary" onclick="submitAddMachine()">Add Machine</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="maintenanceModal">
+        <div class="modal">
+            <h2>Schedule Maintenance</h2>
+            <input type="hidden" id="maintMachineId">
+            <div class="form-group">
+                <label class="form-label">Description (Reason)</label>
+                <input type="text" class="form-input" id="maintDesc" placeholder="e.g. Motor replacement">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Start Date</label>
+                <input type="date" class="form-input" id="maintStartDate">
+            </div>
+            <div class="form-group">
+                <label class="form-label">End Date</label>
+                <input type="date" class="form-input" id="maintEndDate">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-outline" onclick="closeModals()">Cancel</button>
+                <button class="btn-primary" style="background: var(--danger)" onclick="submitMaintenance()">Schedule
+                    Down Time</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="bookModal">
+        <div class="modal">
+            <h2>Book Slot</h2>
+            <input type="hidden" id="bookMachineId">
+            <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1rem;">
+                Select a member to book this machine for.
+            </p>
+            <div class="form-group">
+                <label class="form-label">Member ID</label>
+                <!-- For demo, we just use a simple input. Real app would have a dropdown from Member Service -->
+                <input type="number" class="form-input" id="bookMemberId" value="101">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-outline" onclick="closeModals()">Cancel</button>
+                <button class="btn-primary" onclick="submitBooking()">Confirm Booking</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Operation Successful</div>
+
+    <script>
+        const API_BASE = '/api'; // Relative path since we serve from Spring Boot
+
+        // --- Fetch & Render Config ---
+        async function fetchMachines() {
+            try {
+                const res = await fetch(`${API_BASE}/equipment`);
+                const machines = await res.json();
+                renderMachines(machines);
+                updateStats(machines);
+            } catch (err) {
+                console.error("Error fetching machines:", err);
+                document.getElementById('machineList').innerHTML =
+                    `<div style="text-align: center; color: var(--danger);">Error connecting to server. Ensure Spring Boot is running.</div>`;
+            }
+        }
+
+        function renderMachines(machines) {
+            const container = document.getElementById('machineList');
+            if (machines.length === 0) {
+                container.innerHTML = '<div style="text-align:center; grid-column:1/-1; color:var(--text-secondary)">No machines found. Add one to get started!</div>';
+                return;
+            }
+
+            container.innerHTML = machines.map(m => {
+                // Determine status logic simply for demo (Maintenance check is complex in object structure)
+                // We check if maintenanceSchedule list is not empty
+                const isMaintenance = m.maintenanceSchedule && m.maintenanceSchedule.length > 0;
+                // For 'Booked', we'd need deeper logic, but let's assume available unless maintenance for basic visualization
+
+                let badgeClass = 'status-active';
+                let badgeText = 'Available';
+
+                if (isMaintenance) {
+                    badgeClass = 'status-maintenance';
+                    badgeText = 'Maintenance';
+                }
+
+                // Icon selection based on type
+                let icon = '🏃';
+                if (m.type && m.type.toLowerCase().includes('strength')) icon = '🏋️';
+                if (m.type && m.type.toLowerCase().includes('bike')) icon = '🚴';
+
+                return `
+                <div class="machine-card">
+                    <div class="machine-header">
+                        <div class="machine-icon">${icon}</div>
+                        <span class="status-badge ${badgeClass}">${badgeText}</span>
+                    </div>
+                    <div class="machine-info">
+                        <h3>${m.name}</h3>
+                        <p>ID: ${m.regId} • ${m.type || 'General'}</p>
+                        <p style="margin-top:0.3rem; font-size:0.8rem; opacity:0.7">${m.brand} ${m.model}</p>
+                    </div>
+                    <div class="machine-actions">
+                        <button class="btn-outline btn-book" onclick="openBookModal(${m.regId})" ${isMaintenance ? 'disabled style="opacity:0.3; cursor:not-allowed"' : ''}>
+                            Book
+                        </button>
+                        <button class="btn-outline btn-maint" onclick="openMaintenanceModal(${m.regId})">
+                            Maint.
+                        </button>
+                        <button class="btn-outline btn-delete" style="border-color: var(--danger); color: var(--danger);" onclick="deleteMachine(${m.regId})">
+                            Del
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        async function deleteMachine(id) {
+            if (!confirm('Are you sure you want to delete this machine?')) return;
+            // Optimistic UI update could be done here, but full refresh is safer
+            await apiCall(`/equipment/${id}`, 'DELETE');
+            fetchMachines();
+        }
+
+        async function updateStats(machines) {
+            document.getElementById('statTotal').innerText = machines.length;
+            const maintCount = machines.filter(m => m.maintenanceSchedule && m.maintenanceSchedule.length > 0).length;
+            document.getElementById('statMaint').innerText = maintCount;
+
+            // Fetch dedicated usage stats
+            try {
+                const res = await fetch(`${API_BASE}/equipment/stats`);
+                const stats = await res.json();
+
+                let totalSlots = 0;
+                let bookedSlots = 0;
+
+                stats.forEach(s => {
+                    totalSlots += s.totalSlots;
+                    bookedSlots += s.bookedSlots;
+                });
+
+                const percent = totalSlots > 0 ? Math.round((bookedSlots / totalSlots) * 100) : 0;
+
+                document.getElementById('totalUtil').innerText = percent + "%";
+                document.getElementById('totalUtilBar').style.width = percent + "%";
+
+            } catch (e) { console.log(e); }
+        }
+
+
+        // --- Actions ---
+
+        // Add
+        function openAddModal() { document.getElementById('addMachineModal').classList.add('open'); }
+        async function submitAddMachine() {
+            const data = {
+                regId: 0, // Auto-gen
+                name: document.getElementById('mName').value,
+                type: document.getElementById('mType').value,
+                brand: document.getElementById('mBrand').value,
+                model: document.getElementById('mModel').value,
+                price: 1500.0, // Defaults for demo
+                machineWeight: 100.0
+            };
+
+            await apiCall('/equipment', 'POST', data);
+            closeModals();
+            fetchMachines(); // Refresh
+        }
+
+        // Maintenance
+        function openMaintenanceModal(id) {
+            document.getElementById('maintMachineId').value = id;
+            // Set default dates (Today and Today+7) for convenience
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(today.getDate() + 7);
+
+            document.getElementById('maintStartDate').valueAsDate = today;
+            document.getElementById('maintEndDate').valueAsDate = nextWeek;
+
+            document.getElementById('maintenanceModal').classList.add('open');
+        }
+
+        async function submitMaintenance() {
+            const mid = document.getElementById('maintMachineId').value;
+            const desc = document.getElementById('maintDesc').value;
+            const startDateStr = document.getElementById('maintStartDate').value;
+            const endDateStr = document.getElementById('maintEndDate').value;
+
+            if (!desc || !startDateStr || !endDateStr) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            const parseDate = (str) => {
+                const parts = str.split('-'); // YYYY-MM-DD
+                return {
+                    year: parseInt(parts[0]),
+                    month: parseInt(parts[1]),
+                    day: parseInt(parts[2])
+                };
+            };
+
+            const data = {
+                machineId: parseInt(mid),
+                description: desc,
+                status: "SCHEDULED",
+                startDate: parseDate(startDateStr),
+                endDate: parseDate(endDateStr)
+            };
+
+            await apiCall('/maintenance', 'POST', data);
+            closeModals();
+            fetchMachines();
+        }
+
+        // Booking
+        function openBookModal(id) {
+            document.getElementById('bookMachineId').value = id;
+            document.getElementById('bookModal').classList.add('open');
+        }
+        async function submitBooking() {
+            const mid = document.getElementById('bookMachineId').value;
+            const memId = document.getElementById('bookMemberId').value;
+
+            // Booking endpoint uses query params in this controller
+            await fetch(`${API_BASE}/bookings/book?machineId=${mid}&memberId=${memId}`, { method: 'POST' });
+
+            showToast("Booking Confirmed!");
+            closeModals();
+            // Stats will update on next refresh
+            fetchMachines();
+        }
+
+
+        // Helpers
+        function closeModals() {
+            document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('open'));
+        }
+
+        async function apiCall(endpoint, method, body) {
+            try {
+                const res = await fetch(API_BASE + endpoint, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                if (res.ok) showToast("Action Successful");
+                else showToast("Action Failed", true);
+                return res;
+            } catch (e) {
+                showToast("Network Error", true);
+            }
+        }
+
+        function showToast(msg, isError = false) {
+            const el = document.getElementById('toast');
+            el.innerText = msg;
+            el.style.borderLeftColor = isError ? 'var(--danger)' : 'var(--accent)';
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // Init
+        fetchMachines();
+
+        // --- Navigation ---
+        let currentTab = 'inventory';
+
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // UI Toggle
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            // Simple hack to find button by text content or order, but since we rely on onclick
+            event.target.classList.add('active');
+
+            // Section Toggle
+            document.getElementById('inventorySection').style.display = 'none';
+            document.getElementById('bookingsSection').style.display = 'none';
+            document.getElementById('reportsSection').style.display = 'none';
+
+            if (tab === 'inventory') {
+                document.getElementById('inventorySection').style.display = 'block';
+                fetchMachines();
+            } else if (tab === 'bookings') {
+                document.getElementById('bookingsSection').style.display = 'block';
+                fetchBookings();
+            } else {
+                document.getElementById('reportsSection').style.display = 'block';
+            }
+        }
+
+        // --- Bookings Logic ---
+        async function fetchBookings() {
+            try {
+                // Since our API endpoint /equipment returns machines with their bookings embedded,
+                // we iterate over all machines to extract bookings.
+                const res = await fetch(`${API_BASE}/equipment`);
+                const machines = await res.json();
+
+                const tbody = document.getElementById('bookingsListBody');
+                tbody.innerHTML = '';
+
+                let hasBookings = false;
+
+                machines.forEach(m => {
+                    if (m.bookings && m.bookings.length > 0) {
+                        m.bookings.forEach(b => {
+                            if (b) { // slot might be null
+                                hasBookings = true;
+                                const tr = document.createElement('tr');
+                                tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+                                tr.innerHTML = `
+                                    <td style="padding:1rem;">${m.name} <span style="font-size:0.8rem; opacity:0.6">(${m.regId})</span></td>
+                                    <td style="padding:1rem;">${b.name || 'Member ' + b.regId}</td>
+                                    <td style="padding:1rem;">Today</td>
+                                    <td style="padding:1rem;">
+                                        <button class="btn-outline btn-maint" style="padding:0.3rem 0.6rem; font-size:0.8rem;"
+                                            onclick="cancelBooking(${m.regId}, ${b.regId})">Cancel</button>
+                                    </td>
+                                `;
+                                tbody.appendChild(tr);
+                            }
+                        });
+                    }
+                });
+
+                if (!hasBookings) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem; opacity:0.6">No active bookings found.</td></tr>';
+                }
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function cancelBooking(mid, memId) {
+            if (!confirm("Are you sure you want to cancel this booking?")) return;
+
+            await fetch(`${API_BASE}/bookings/cancel?machineId=${mid}&memberId=${memId}`, { method: 'POST' });
+            showToast("Booking Cancelled");
+            fetchBookings(); // Refresh list
+        }
+
+    </script>
+</body>
+
+</html>
