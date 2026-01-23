@@ -36,6 +36,21 @@ public class Date implements Serializable {
         return false;
     }
 
+    public boolean isValidYear(int year) {
+        // Constraints: Not in the far future (20000) and not before gym founded
+        int currentYear = LocalDate.now().getYear();
+        return year >= 1900 && year <= currentYear;
+    }
+
+    public boolean isNotFutureDate() {
+        try {
+            LocalDate inputDate = LocalDate.of(this.year, this.month, this.day);
+            return !inputDate.isAfter(LocalDate.now());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public void setDay(int day) {
         this.day = day;
     }

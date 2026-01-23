@@ -12,19 +12,31 @@ import java.util.stream.Collectors;
 @Repository
 public class FileMachineRepository {
 
-    private static final String FILE_NAME = "Machine";
+    private static final String FILE_NAME = "machines.dat";
     private List<Machine> machines = new ArrayList<>();
 
     public FileMachineRepository() {
         loadMachineFile();
     }
 
+    // public List<Machine> findAll() {
+    //     return new ArrayList<>(machines); // Return copy
+    // }
+
+    @SuppressWarnings("unchecked")
     public List<Machine> findAll() {
-        return new ArrayList<>(machines); // Return copy
+        File file = new File(FILE_NAME);
+        if (!file.exists()) return new ArrayList<Machine>();
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (List<Machine>) ois.readObject();
+        } catch (Exception e) {
+            return new ArrayList<Machine>();
+        }
     }
 
     public Optional<Machine> findById(int regId) {
-        return machines.stream().filter(m -> m.getRegId() == regId).findFirst();
+        return findAll().stream().filter(m -> m.getRegId() == regId).findFirst();
     }
 
     public Machine save(Machine machine) {
