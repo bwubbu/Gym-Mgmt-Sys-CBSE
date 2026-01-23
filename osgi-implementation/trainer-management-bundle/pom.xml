@@ -62,10 +62,11 @@
                         <Bundle-Description>Trainer management service for Gym Management System</Bundle-Description>
                         <Bundle-Activator>com.gymmanagement.osgi.trainer.internal.TrainerBundleActivator</Bundle-Activator>
                         <Import-Package>
+                            !org.osgi.service.component.annotations,
                             org.osgi.framework;version="[1.8,2)",
-                            org.osgi.service.component.annotations;version="[1.3,2)",
                             com.gymmanagement.osgi.base.entity;version="[1.0,2)",
-                            com.gymmanagement.osgi.base.service;version="[1.0,2)"
+                            com.gymmanagement.osgi.base.service;version="[1.0,2)",
+                            *
                         </Import-Package>
                         <Private-Package>
                             com.gymmanagement.osgi.trainer.internal

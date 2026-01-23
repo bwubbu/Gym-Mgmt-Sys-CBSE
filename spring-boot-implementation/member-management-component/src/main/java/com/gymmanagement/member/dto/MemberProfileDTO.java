@@ -34,6 +34,7 @@ public class MemberProfileDTO {
     private Double outstandingBalance;
     private String trainerName;
     private List<String> accessibleMachines;
+    private List<String> accessibleMachineDetails;
     
     // History (Simulated or from a separate history table)
     private List<BodyStats> bodyStatsHistory;
@@ -49,6 +50,9 @@ public class MemberProfileDTO {
 
     public List<String> getAccessibleMachines() { return accessibleMachines; }
     public void setAccessibleMachines(List<String> accessibleMachines) { this.accessibleMachines = accessibleMachines; }
+
+    public List<String> getAccessibleMachineDetails() { return accessibleMachineDetails; }
+    public void setAccessibleMachineDetails(List<String> accessibleMachineDetails) { this.accessibleMachineDetails = accessibleMachineDetails; }
 
     public List<BodyStats> getBodyStatsHistory() { return bodyStatsHistory; }
     public void setBodyStatsHistory(List<BodyStats> bodyStatsHistory) { this.bodyStatsHistory = bodyStatsHistory; }

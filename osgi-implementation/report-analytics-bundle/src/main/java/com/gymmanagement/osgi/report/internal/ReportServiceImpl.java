@@ -341,8 +341,10 @@ public class ReportServiceImpl implements IReportService {
         Map<String, Object> stats = new HashMap<>();
         
         List<Member> validMembers = members.stream()
-                .filter(m -> m.getHeight() > 0 && m.getWeight() > 0)
-                .collect(Collectors.toList());
+            .filter(m -> m.getBodyStats() != null && 
+                        m.getBodyStats().getHeight() > 0 && 
+                        m.getBodyStats().getWeight() > 0)
+            .collect(Collectors.toList());
         
         if (validMembers.isEmpty()) {
             stats.put("error", "No valid body statistics data available");
@@ -350,12 +352,14 @@ public class ReportServiceImpl implements IReportService {
         }
         
         double avgHeight = validMembers.stream()
-                .mapToDouble(Member::getHeight)
+                .filter(m -> m.getBodyStats() != null) // Safety check
+                .mapToDouble(m -> m.getBodyStats().getHeight()) 
                 .average()
                 .orElse(0.0);
         
         double avgWeight = validMembers.stream()
-                .mapToDouble(Member::getWeight)
+                .filter(m -> m.getBodyStats() != null)
+                .mapToDouble(m -> m.getBodyStats().getWeight())
                 .average()
                 .orElse(0.0);
         

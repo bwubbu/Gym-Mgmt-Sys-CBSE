@@ -1,14 +1,26 @@
 package com.gymmanagement.osgi.test;
 
-import com.gymmanagement.osgi.base.entity.*;
-import com.gymmanagement.osgi.base.service.*;
+import java.time.LocalDate;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import java.util.Map;
 
-import java.time.LocalDate;
+import com.gymmanagement.osgi.base.entity.BodyStats;
+import com.gymmanagement.osgi.base.entity.Date;
+import com.gymmanagement.osgi.base.entity.Machine;
+import com.gymmanagement.osgi.base.entity.Member;
+import com.gymmanagement.osgi.base.entity.MemberPlan;
+import com.gymmanagement.osgi.base.entity.Payment;
+import com.gymmanagement.osgi.base.entity.Trainer;
+import com.gymmanagement.osgi.base.service.IMachineService;
+import com.gymmanagement.osgi.base.service.IMemberService;
+import com.gymmanagement.osgi.base.service.IPaymentService;
+import com.gymmanagement.osgi.base.service.IReportService;
+import com.gymmanagement.osgi.base.service.ITrainerService;
 
 /**
  * Test Client Bundle Activator
@@ -37,6 +49,10 @@ public class TestClient implements BundleActivator {
         // Test IMachineService
         testMachineService(context);
 
+        // Register MemberManagementDemo as Gogo Commands
+        // This replaces the "Threaded Scanner" logic
+        registerGogoCommands(context);
+
         System.out.println("\n=========================================");
         System.out.println("OSGi Test Client - Tests Complete");
         System.out.println("=========================================\n");
@@ -56,6 +72,29 @@ public class TestClient implements BundleActivator {
         } catch (Exception e) {
             System.err.println("❌ Failed to register gym commands: " + e.getMessage());
         }
+
+    }
+
+    private void registerGogoCommands(BundleContext context) {
+        Hashtable<String, Object> props = new Hashtable<>();
+        // This is the 'gym:' prefix you will use in the terminal
+        props.put("osgi.command.scope", "gym");
+        
+        // These are the methods inside MemberManagementDemo that will be commands
+        // Inside registerGogoCommands
+        props.put("osgi.command.function", new String[] { 
+            "seedMyPart", "addMember", "viewAllMembers", "searchMember", 
+            "removeMember", "modifyMember", "listMachines", "viewPlans",
+            "addPlan", "searchPlan", "listTrainers", "viewProfile",
+            "listMachines", "removePlan", "modifyPlan", "updateStats", "updateMemberStat"
+        });
+
+        context.registerService(
+            MemberManagementDemo.class.getName(), 
+            new MemberManagementDemo(context), 
+            props
+        );
+        System.out.println("✅ Gogo Commands registered under 'gym' scope.");
     }
 
     private void testMemberService(BundleContext context) {
@@ -84,7 +123,7 @@ public class TestClient implements BundleActivator {
             Date joinDate1 = new Date(1, 15, 2024);
             Date dob1 = new Date(5, 20, 1995);
             Payment payment1 = new Payment(0.0, "John Doe", "1234-5678-9012-3456");
-            Member member1 = new Member(0, "John Doe", "john@example.com", 
+            Member member1 = new Member(0, "John Doe", "john@gmail.com", 
                 "0300-1234567", "123 Main St", joinDate1, dob1, 29, "Male", 
                 1.75, 70.0, payment1, "Weight Loss");
             memberService.addMember(member1);
@@ -94,7 +133,7 @@ public class TestClient implements BundleActivator {
             Date joinDate2 = new Date(2, 10, 2024);
             Date dob2 = new Date(8, 15, 1998);
             Payment payment2 = new Payment(150.0, "Sarah Smith", "2345-6789-0123-4567");
-            Member member2 = new Member(0, "Sarah Smith", "sarah@example.com", 
+            Member member2 = new Member(0, "Sarah Smith", "sarah@gmail.com", 
                 "0300-2345678", "456 Oak Ave", joinDate2, dob2, 26, "Female", 
                 1.65, 55.0, payment2, "Muscle Gain");
             memberService.addMember(member2);
@@ -104,7 +143,7 @@ public class TestClient implements BundleActivator {
             Date joinDate3 = new Date(3, 5, 2024);
             Date dob3 = new Date(3, 12, 1985);
             Payment payment3 = new Payment(0.0, "Mike Johnson", "3456-7890-1234-5678");
-            Member member3 = new Member(0, "Mike Johnson", "mike@example.com", 
+            Member member3 = new Member(0, "Mike Johnson", "mike@gmail.com", 
                 "0300-3456789", "789 Pine Rd", joinDate3, dob3, 39, "Male", 
                 1.80, 85.0, payment3, "Endurance");
             memberService.addMember(member3);
@@ -114,7 +153,7 @@ public class TestClient implements BundleActivator {
             Date joinDate4 = new Date(4, 20, 2024);
             Date dob4 = new Date(11, 8, 1988);
             Payment payment4 = new Payment(75.50, "Emily Davis", "4567-8901-2345-6789");
-            Member member4 = new Member(0, "Emily Davis", "emily@example.com", 
+            Member member4 = new Member(0, "Emily Davis", "emily@gmail.com", 
                 "0300-4567890", "321 Elm St", joinDate4, dob4, 36, "Female", 
                 1.70, 62.0, payment4, "Flexibility");
             memberService.addMember(member4);
@@ -124,7 +163,7 @@ public class TestClient implements BundleActivator {
             Date joinDate5 = new Date(5, 1, 2024);
             Date dob5 = new Date(7, 22, 1975);
             Payment payment5 = new Payment(0.0, "Robert Brown", "5678-9012-3456-7890");
-            Member member5 = new Member(0, "Robert Brown", "robert@example.com", 
+            Member member5 = new Member(0, "Robert Brown", "robert@gmail.com", 
                 "0300-5678901", "654 Maple Dr", joinDate5, dob5, 49, "Male", 
                 1.78, 90.0, payment5, "General Fitness");
             memberService.addMember(member5);
@@ -134,7 +173,7 @@ public class TestClient implements BundleActivator {
             Date joinDate6 = new Date(6, 15, 2024);
             Date dob6 = new Date(2, 14, 2000);
             Payment payment6 = new Payment(200.0, "Lisa Wilson", "6789-0123-4567-8901");
-            Member member6 = new Member(0, "Lisa Wilson", "lisa@example.com", 
+            Member member6 = new Member(0, "Lisa Wilson", "lisa@gmail.com", 
                 "0300-6789012", "987 Cedar Ln", joinDate6, dob6, 24, "Female", 
                 1.60, 65.0, payment6, "Weight Loss");
             memberService.addMember(member6);
@@ -144,7 +183,7 @@ public class TestClient implements BundleActivator {
             Date joinDate7 = new Date(7, 10, 2024);
             Date dob7 = new Date(9, 30, 1982);
             Payment payment7 = new Payment(0.0, "David Lee", "7890-1234-5678-9012");
-            Member member7 = new Member(0, "David Lee", "david@example.com", 
+            Member member7 = new Member(0, "David Lee", "david@gmail.com", 
                 "0300-7890123", "147 Birch Way", joinDate7, dob7, 42, "Male", 
                 1.82, 88.0, payment7, "Muscle Gain");
             memberService.addMember(member7);
@@ -154,7 +193,7 @@ public class TestClient implements BundleActivator {
             Date joinDate8 = new Date(8, 25, 2024);
             Date dob8 = new Date(4, 5, 1997);
             Payment payment8 = new Payment(125.75, "Alex Taylor", "8901-2345-6789-0123");
-            Member member8 = new Member(0, "Alex Taylor", "alex@example.com", 
+            Member member8 = new Member(0, "Alex Taylor", "alex@gmail.com", 
                 "0300-8901234", "258 Spruce Ct", joinDate8, dob8, 27, "Male", 
                 1.77, 72.0, payment8, "Endurance");
             memberService.addMember(member8);
@@ -164,7 +203,7 @@ public class TestClient implements BundleActivator {
             Date joinDate9 = new Date(9, 12, 2024);
             Date dob9 = new Date(12, 3, 1970);
             Payment payment9 = new Payment(0.0, "Maria Garcia", "9012-3456-7890-1234");
-            Member member9 = new Member(0, "Maria Garcia", "maria@example.com", 
+            Member member9 = new Member(0, "Maria Garcia", "maria@gmail.com", 
                 "0300-9012345", "369 Willow Pl", joinDate9, dob9, 54, "Female", 
                 1.68, 68.0, payment9, "General Fitness");
             memberService.addMember(member9);
@@ -174,7 +213,7 @@ public class TestClient implements BundleActivator {
             Date joinDate10 = new Date(10, 30, 2024);
             Date dob10 = new Date(6, 18, 1986);
             Payment payment10 = new Payment(50.0, "Jennifer Martinez", "0123-4567-8901-2345");
-            Member member10 = new Member(0, "Jennifer Martinez", "jennifer@example.com", 
+            Member member10 = new Member(0, "Jennifer Martinez", "jennifer@gmail.com", 
                 "0300-0123456", "741 Ash Blvd", joinDate10, dob10, 38, "Female", 
                 1.72, 60.0, payment10, "Flexibility");
             memberService.addMember(member10);
@@ -192,6 +231,177 @@ public class TestClient implements BundleActivator {
             
         } catch (Exception e) {
             System.out.println("❌ Error testing IMemberService: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // try {
+        //     // 1. CLEAN START: Hard wipe any existing data for a consistent test
+        //     System.out.println("\n🧹 Resetting system for clean test...");
+        //     memberService.deleteAllData();
+
+        //     // 2. SEED PLANS: Must exist before linking members
+        //     System.out.println("📦 Creating Member Plans...");
+        //     MemberPlan vip = new MemberPlan();
+        //     vip.setPlanId("P-VIP");
+        //     vip.setPlanName("Exclusive VIP");
+        //     vip.setPrice(999.0);
+        //     memberService.addMemberPlan(vip);
+
+        //     MemberPlan student = new MemberPlan();
+        //     student.setPlanId("P-STUDENT");
+        //     student.setPlanName("Student Plan");
+        //     student.setPrice(50.0);
+        //     memberService.addMemberPlan(student);
+
+        //     // 3. CREATE & ADD MEMBER: Testing UC-1 Logic
+        //     System.out.println("\n👤 Testing: Add Member (UC-1)...");
+        //     Date joinDate = new Date(1, 23, 2026);
+        //     Date dob = new Date(5, 20, 1995);
+        //     Payment payment = new Payment(0.0, "Ahmad Ali", "1234-5678");
+            
+        //     Member m1 = new Member(9406, "Ahmad Ali", "ahmad@gmail.com", 
+        //         "012345678", "KL", joinDate, dob, 30, "Male", 
+        //         1.75, 80.0, payment, "Muscle Gain");
+        //     m1.setCurrentPlan(vip); // Linking to VIP
+            
+        //     String addResult = memberService.addMember(m1);
+        //     System.out.println("✅ " + addResult);
+
+        //     // 4. TESTING SEARCH & RETRIEVAL
+        //     System.out.println("\n🔍 Testing: Member Retrieval...");
+        //     Member found = memberService.getMember(9406);
+        //     if (found != null && found.getName().equals("Ahmad Ali")) {
+        //         System.out.println("✅ getMember: Successfully retrieved Ahmad Ali.");
+        //     }
+
+        //     List<Member> search = memberService.searchMembersByName("Ahmad");
+        //     System.out.println("✅ searchMembersByName: Found " + search.size() + " matches.");
+
+        //     // 5. TESTING BODY STATS & HISTORY (UC-3)
+        //     System.out.println("\n📈 Testing: Progress Tracking (UC-3)...");
+            
+        //     // Test 1: Successful Update
+        //     BodyStats newStats = new BodyStats(1.75, 75.0, 18.0); // 80kg -> 75kg
+        //     String statResult = memberService.updateBodyStats(9406, newStats);
+        //     System.out.println("✅ updateBodyStats (Valid): " + statResult);
+
+        //     // Test 2: History Snapshot Check
+        //     Member historyCheck = memberService.getMember(9406);
+        //     if (historyCheck.getStatsHistory().size() >= 1) {
+        //         System.out.println("✅ UC-3 Snapshot: History contains " + 
+        //             historyCheck.getStatsHistory().size() + " record(s).");
+        //     }
+
+        //     // Test 3: Validation Check (Negative Height)
+        //     BodyStats invalidStats = new BodyStats(-1.0, 75.0, 18.0);
+        //     String validationResult = memberService.updateBodyStats(9406, invalidStats);
+        //     System.out.println("✅ updateBodyStats (Validation): " + validationResult);
+
+        //     // 6. TESTING UPDATE MEMBER
+        //     System.out.println("\n✏️ Testing: Update Member Information...");
+        //     found.setAddress("Petaling Jaya");
+        //     String updateMsg = memberService.updateMember(found);
+        //     System.out.println("✅ updateMember: " + updateMsg);
+
+        //     // 7. TESTING PLAN CONSTRAINTS
+        //     System.out.println("\n🚫 Testing: Plan Deletion Constraints...");
+        //     String deletePlanMsg = memberService.deleteMemberPlan("P-VIP");
+        //     System.out.println("✅ deleteMemberPlan (In Use Check): " + deletePlanMsg);
+
+        //     // 8. TESTING DELETE MEMBER
+        //     System.out.println("\n🗑️ Testing: Member Deletion...");
+        //     String deleteMsg = memberService.deleteMember(9406);
+        //     System.out.println("✅ deleteMember: " + deleteMsg);
+
+        // } catch (Exception e) {
+        //     System.out.println("❌ Critical Error during testing: " + e.getMessage());
+        //     e.printStackTrace();
+        // }
+
+        try {
+            // 1. CLEAN START: Hard wipe any existing data for a consistent test
+            System.out.println("\n[SYSTEM] Resetting system for clean integration test...");
+            memberService.deleteAllData();
+
+            // 2. SEED PLANS: Must exist before linking members
+            System.out.println("[STEP 1] Creating Member Plans...");
+            MemberPlan vip = new MemberPlan();
+            vip.setPlanId("P-VIP");
+            vip.setPlanName("Exclusive VIP");
+            vip.setPrice(999.0);
+            memberService.addMemberPlan(vip);
+
+            MemberPlan student = new MemberPlan();
+            student.setPlanId("P-STUDENT");
+            student.setPlanName("Student Plan");
+            student.setPrice(50.0);
+            memberService.addMemberPlan(student);
+            System.out.println("Status: Plans Seeded Successfully");
+
+            // 3. CREATE & ADD MEMBER: Testing UC-1 Logic
+            System.out.println("\n[STEP 2] Testing: Add Member (UC-1)...");
+            Date joinDate = new Date(1, 23, 2026);
+            Date dob = new Date(5, 20, 1995);
+            Payment payment = new Payment(0.0, "Ahmad Ali", "1234-5678");
+            
+            Member m1 = new Member(9406, "Ahmad Ali", "ahmad@gmail.com", 
+                "012345678", "KL", joinDate, dob, 30, "Male", 
+                1.75, 80.0, payment, "Muscle Gain");
+            m1.setCurrentPlan(vip); // Linking to VIP
+            
+            String addResult = memberService.addMember(m1);
+            System.out.println("Result: " + addResult);
+
+            // 4. TESTING SEARCH & RETRIEVAL
+            System.out.println("\n[STEP 3] Testing: Member Retrieval...");
+            Member found = memberService.getMember(9406);
+            if (found != null && found.getName().equals("Ahmad Ali")) {
+                System.out.println("Status: getMember successfully retrieved Ahmad Ali.");
+            }
+
+            List<Member> search = memberService.searchMembersByName("Ahmad");
+            System.out.println("Status: searchMembersByName found " + search.size() + " matches.");
+
+            // 5. TESTING BODY STATS & HISTORY (UC-3)
+            System.out.println("\n[STEP 4] Testing: Progress Tracking (UC-3)...");
+            
+            // Test 1: Successful Update
+            BodyStats newStats = new BodyStats(1.75, 75.0, 18.0); // 80kg -> 75kg
+            String statResult = memberService.updateBodyStats(9406, newStats);
+            System.out.println("Status: updateBodyStats (Valid): " + statResult);
+
+            // Test 2: History Snapshot Check
+            Member historyCheck = memberService.getMember(9406);
+            if (historyCheck.getStatsHistory().size() >= 1) {
+                System.out.println("Status: UC-3 Snapshot verified. History contains " + 
+                    historyCheck.getStatsHistory().size() + " record(s).");
+            }
+
+            // Test 3: Validation Check (Negative Height)
+            BodyStats invalidStats = new BodyStats(-1.0, 75.0, 18.0);
+            String validationResult = memberService.updateBodyStats(9406, invalidStats);
+            System.out.println("Status: updateBodyStats (Validation): " + validationResult);
+
+            // 6. TESTING UPDATE MEMBER
+            System.out.println("\n[STEP 5] Testing: Update Member Information...");
+            found.setAddress("Petaling Jaya");
+            String updateMsg = memberService.updateMember(found);
+            System.out.println("Status: updateMember: " + updateMsg);
+
+            // 7. TESTING PLAN CONSTRAINTS
+            System.out.println("\n[STEP 6] Testing: Plan Deletion Constraints...");
+            String deletePlanMsg = memberService.deleteMemberPlan("P-VIP");
+            System.out.println("Status: deleteMemberPlan (In Use Check): " + deletePlanMsg);
+
+            // 8. TESTING DELETE MEMBER
+            System.out.println("\n[STEP 7] Testing: Member Deletion...");
+            String deleteMsg = memberService.deleteMember(9406);
+            System.out.println("Status: deleteMember: " + deleteMsg);
+
+            System.out.println("\n--- [FINISH] All Integration Tests Completed ---");
+
+        } catch (Exception e) {
+            System.out.println("[FATAL ERROR] Integration test interrupted: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -250,7 +460,7 @@ public class TestClient implements BundleActivator {
             // Trainer 2: Strength training specialist
             Date joinDate2 = new Date(2, 1, 2024);
             Date dob2 = new Date(8, 15, 1988);
-            Trainer trainer2 = new Trainer(0, "Mark Strong", "mark@example.com", 
+            Trainer trainer2 = new Trainer(0, "Mark Strong", "mark@gmail.com", 
                 "0300-8765432", "789 Power St", joinDate2, dob2, 36, "Male", 
                 "Strength Training", 45.0, 15.0, "Advanced");
             trainerService.addTrainer(trainer2);
@@ -259,7 +469,7 @@ public class TestClient implements BundleActivator {
             // Trainer 3: Cardio specialist
             Date joinDate3 = new Date(3, 10, 2024);
             Date dob3 = new Date(3, 22, 1992);
-            Trainer trainer3 = new Trainer(0, "Amy Runner", "amy@example.com", 
+            Trainer trainer3 = new Trainer(0, "Amy Runner", "amy@gmail.com", 
                 "0300-9876543", "321 Cardio Ave", joinDate3, dob3, 32, "Female", 
                 "Cardio", 35.0, 18.0, "Intermediate");
             trainerService.addTrainer(trainer3);
@@ -268,7 +478,7 @@ public class TestClient implements BundleActivator {
             // Trainer 4: Pilates specialist
             Date joinDate4 = new Date(4, 5, 2024);
             Date dob4 = new Date(11, 8, 1985);
-            Trainer trainer4 = new Trainer(0, "Sophie Core", "sophie@example.com", 
+            Trainer trainer4 = new Trainer(0, "Sophie Core", "sophie@gmail.com", 
                 "0300-0987654", "654 Flexibility Rd", joinDate4, dob4, 39, "Female", 
                 "Pilates", 40.0, 12.0, "Advanced");
             trainerService.addTrainer(trainer4);
@@ -277,7 +487,7 @@ public class TestClient implements BundleActivator {
             // Trainer 5: CrossFit specialist
             Date joinDate5 = new Date(5, 20, 2024);
             Date dob5 = new Date(7, 14, 1987);
-            Trainer trainer5 = new Trainer(0, "Tom Cross", "tom@example.com", 
+            Trainer trainer5 = new Trainer(0, "Tom Cross", "tom@gmail.com", 
                 "0300-1098765", "147 Intensity Way", joinDate5, dob5, 37, "Male", 
                 "CrossFit", 50.0, 10.0, "Expert");
             trainerService.addTrainer(trainer5);

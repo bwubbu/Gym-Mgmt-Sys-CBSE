@@ -1,6 +1,9 @@
 package com.gymmanagement.base.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,23 +16,12 @@ import lombok.EqualsAndHashCode;
 public class Member extends Person implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // private int regId;
-    // private String name;
-    // private String gmail;    // Added directly to fix "symbol not found"
-    // private String phoneNum; // Added directly to fix "symbol not found"
-    // private String address;  // Added directly to fix "symbol not found"
-    // private String gender;
-    
-    // private double height;
-    // private double weight;
-    // private double bmi; // Body Mass index
-    // private Date dateOfJoin;  // Change from String to Date
-    // private Date dateOfBirth; // Change from String to Date
-    private Payment memberPayment;
+    private Payment memberPayment = new Payment();
     private String fitnessGoal;    
-    private BodyStats bodyStats;
-    private MemberPlan currentPlan;
+    private BodyStats bodyStats = new BodyStats();
+    private MemberPlan currentPlan = new MemberPlan();
     private Integer assignedTrainerId; // Added for UC-1 Step 9.2
+    private List<BodyStats> bodyStatsHistory = new ArrayList<>();
     
     public Member() {
         super();
@@ -37,6 +29,7 @@ public class Member extends Person implements Serializable {
         // weight = 0.0;
         // bmi = 0.0;
         fitnessGoal = null;
+        this.bodyStatsHistory = new ArrayList<>();
         this.bodyStats = new BodyStats();
         this.memberPayment = new Payment();
         this.currentPlan = new MemberPlan();
@@ -126,7 +119,9 @@ public class Member extends Person implements Serializable {
     public void setDateOfJoin(Date date) { this.joinDate = date; }
     public Date getDateOfJoin() { return this.joinDate; }
     
+    @Override
     public void setDateOfBirth(Date date) { this.dateOfBirth = date; }
+    @Override
     public Date getDateOfBirth() { return this.dateOfBirth; }
 
     public BodyStats getBodyStats() {
@@ -135,6 +130,14 @@ public class Member extends Person implements Serializable {
 
     public void setBodyStats(BodyStats bodyStats) {
         this.bodyStats = bodyStats;
+    }
+
+    public List<BodyStats> getBodyStatsHistory() {
+        return bodyStatsHistory;
+    }
+
+    public void setBodyStatsHistory(List<BodyStats> bodyStatsHistory) {
+        this.bodyStatsHistory = bodyStatsHistory;
     }
 
     public MemberPlan getCurrentPlan() {
@@ -152,6 +155,14 @@ public class Member extends Person implements Serializable {
     public void setAssignedTrainerId(Integer assignedTrainerId) {
         this.assignedTrainerId = assignedTrainerId;
     }
+
+    // public List<BodyStats> getBodyStatsHistory() {
+    //     return bodyStatsHistory;
+    // }
+
+    // public void setBodyStatsHistory(List<BodyStats> bodyStatsHistory) {
+    //     this.bodyStatsHistory = bodyStatsHistory;
+    // }
     
     @Override
     public String getFinancialReport() {
@@ -189,6 +200,14 @@ public class Member extends Person implements Serializable {
             return false;
         }
         return true;
+    }
+
+    // Helper to get the most recent record from history
+    public BodyStats getLatestStats() {
+        if (bodyStatsHistory == null || bodyStatsHistory.isEmpty()) {
+            return bodyStats != null ? bodyStats : new BodyStats();
+        }
+        return bodyStatsHistory.get(bodyStatsHistory.size() - 1);
     }
 
     // @Override
