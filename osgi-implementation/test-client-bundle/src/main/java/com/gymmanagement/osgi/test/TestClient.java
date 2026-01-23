@@ -1,19 +1,26 @@
 package com.gymmanagement.osgi.test;
 
-import com.gymmanagement.osgi.base.entity.*;
-import com.gymmanagement.osgi.base.entity.Date;
-import com.gymmanagement.osgi.base.service.*;
-
+import java.time.LocalDate;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import java.util.Map;
-
-import java.time.LocalDate;
-import java.util.Hashtable;
+import com.gymmanagement.osgi.base.entity.BodyStats;
+import com.gymmanagement.osgi.base.entity.Date;
+import com.gymmanagement.osgi.base.entity.Machine;
+import com.gymmanagement.osgi.base.entity.Member;
+import com.gymmanagement.osgi.base.entity.MemberPlan;
+import com.gymmanagement.osgi.base.entity.Payment;
+import com.gymmanagement.osgi.base.entity.Trainer;
+import com.gymmanagement.osgi.base.service.IMachineService;
+import com.gymmanagement.osgi.base.service.IMemberService;
+import com.gymmanagement.osgi.base.service.IPaymentService;
+import com.gymmanagement.osgi.base.service.IReportService;
+import com.gymmanagement.osgi.base.service.ITrainerService;
 
 /**
  * Test Client Bundle Activator
@@ -218,6 +225,177 @@ public class TestClient implements BundleActivator {
             
         } catch (Exception e) {
             System.out.println("❌ Error testing IMemberService: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // try {
+        //     // 1. CLEAN START: Hard wipe any existing data for a consistent test
+        //     System.out.println("\n🧹 Resetting system for clean test...");
+        //     memberService.deleteAllData();
+
+        //     // 2. SEED PLANS: Must exist before linking members
+        //     System.out.println("📦 Creating Member Plans...");
+        //     MemberPlan vip = new MemberPlan();
+        //     vip.setPlanId("P-VIP");
+        //     vip.setPlanName("Exclusive VIP");
+        //     vip.setPrice(999.0);
+        //     memberService.addMemberPlan(vip);
+
+        //     MemberPlan student = new MemberPlan();
+        //     student.setPlanId("P-STUDENT");
+        //     student.setPlanName("Student Plan");
+        //     student.setPrice(50.0);
+        //     memberService.addMemberPlan(student);
+
+        //     // 3. CREATE & ADD MEMBER: Testing UC-1 Logic
+        //     System.out.println("\n👤 Testing: Add Member (UC-1)...");
+        //     Date joinDate = new Date(1, 23, 2026);
+        //     Date dob = new Date(5, 20, 1995);
+        //     Payment payment = new Payment(0.0, "Ahmad Ali", "1234-5678");
+            
+        //     Member m1 = new Member(9406, "Ahmad Ali", "ahmad@gmail.com", 
+        //         "012345678", "KL", joinDate, dob, 30, "Male", 
+        //         1.75, 80.0, payment, "Muscle Gain");
+        //     m1.setCurrentPlan(vip); // Linking to VIP
+            
+        //     String addResult = memberService.addMember(m1);
+        //     System.out.println("✅ " + addResult);
+
+        //     // 4. TESTING SEARCH & RETRIEVAL
+        //     System.out.println("\n🔍 Testing: Member Retrieval...");
+        //     Member found = memberService.getMember(9406);
+        //     if (found != null && found.getName().equals("Ahmad Ali")) {
+        //         System.out.println("✅ getMember: Successfully retrieved Ahmad Ali.");
+        //     }
+
+        //     List<Member> search = memberService.searchMembersByName("Ahmad");
+        //     System.out.println("✅ searchMembersByName: Found " + search.size() + " matches.");
+
+        //     // 5. TESTING BODY STATS & HISTORY (UC-3)
+        //     System.out.println("\n📈 Testing: Progress Tracking (UC-3)...");
+            
+        //     // Test 1: Successful Update
+        //     BodyStats newStats = new BodyStats(1.75, 75.0, 18.0); // 80kg -> 75kg
+        //     String statResult = memberService.updateBodyStats(9406, newStats);
+        //     System.out.println("✅ updateBodyStats (Valid): " + statResult);
+
+        //     // Test 2: History Snapshot Check
+        //     Member historyCheck = memberService.getMember(9406);
+        //     if (historyCheck.getStatsHistory().size() >= 1) {
+        //         System.out.println("✅ UC-3 Snapshot: History contains " + 
+        //             historyCheck.getStatsHistory().size() + " record(s).");
+        //     }
+
+        //     // Test 3: Validation Check (Negative Height)
+        //     BodyStats invalidStats = new BodyStats(-1.0, 75.0, 18.0);
+        //     String validationResult = memberService.updateBodyStats(9406, invalidStats);
+        //     System.out.println("✅ updateBodyStats (Validation): " + validationResult);
+
+        //     // 6. TESTING UPDATE MEMBER
+        //     System.out.println("\n✏️ Testing: Update Member Information...");
+        //     found.setAddress("Petaling Jaya");
+        //     String updateMsg = memberService.updateMember(found);
+        //     System.out.println("✅ updateMember: " + updateMsg);
+
+        //     // 7. TESTING PLAN CONSTRAINTS
+        //     System.out.println("\n🚫 Testing: Plan Deletion Constraints...");
+        //     String deletePlanMsg = memberService.deleteMemberPlan("P-VIP");
+        //     System.out.println("✅ deleteMemberPlan (In Use Check): " + deletePlanMsg);
+
+        //     // 8. TESTING DELETE MEMBER
+        //     System.out.println("\n🗑️ Testing: Member Deletion...");
+        //     String deleteMsg = memberService.deleteMember(9406);
+        //     System.out.println("✅ deleteMember: " + deleteMsg);
+
+        // } catch (Exception e) {
+        //     System.out.println("❌ Critical Error during testing: " + e.getMessage());
+        //     e.printStackTrace();
+        // }
+
+        try {
+            // 1. CLEAN START: Hard wipe any existing data for a consistent test
+            System.out.println("\n[SYSTEM] Resetting system for clean integration test...");
+            memberService.deleteAllData();
+
+            // 2. SEED PLANS: Must exist before linking members
+            System.out.println("[STEP 1] Creating Member Plans...");
+            MemberPlan vip = new MemberPlan();
+            vip.setPlanId("P-VIP");
+            vip.setPlanName("Exclusive VIP");
+            vip.setPrice(999.0);
+            memberService.addMemberPlan(vip);
+
+            MemberPlan student = new MemberPlan();
+            student.setPlanId("P-STUDENT");
+            student.setPlanName("Student Plan");
+            student.setPrice(50.0);
+            memberService.addMemberPlan(student);
+            System.out.println("Status: Plans Seeded Successfully");
+
+            // 3. CREATE & ADD MEMBER: Testing UC-1 Logic
+            System.out.println("\n[STEP 2] Testing: Add Member (UC-1)...");
+            Date joinDate = new Date(1, 23, 2026);
+            Date dob = new Date(5, 20, 1995);
+            Payment payment = new Payment(0.0, "Ahmad Ali", "1234-5678");
+            
+            Member m1 = new Member(9406, "Ahmad Ali", "ahmad@gmail.com", 
+                "012345678", "KL", joinDate, dob, 30, "Male", 
+                1.75, 80.0, payment, "Muscle Gain");
+            m1.setCurrentPlan(vip); // Linking to VIP
+            
+            String addResult = memberService.addMember(m1);
+            System.out.println("Result: " + addResult);
+
+            // 4. TESTING SEARCH & RETRIEVAL
+            System.out.println("\n[STEP 3] Testing: Member Retrieval...");
+            Member found = memberService.getMember(9406);
+            if (found != null && found.getName().equals("Ahmad Ali")) {
+                System.out.println("Status: getMember successfully retrieved Ahmad Ali.");
+            }
+
+            List<Member> search = memberService.searchMembersByName("Ahmad");
+            System.out.println("Status: searchMembersByName found " + search.size() + " matches.");
+
+            // 5. TESTING BODY STATS & HISTORY (UC-3)
+            System.out.println("\n[STEP 4] Testing: Progress Tracking (UC-3)...");
+            
+            // Test 1: Successful Update
+            BodyStats newStats = new BodyStats(1.75, 75.0, 18.0); // 80kg -> 75kg
+            String statResult = memberService.updateBodyStats(9406, newStats);
+            System.out.println("Status: updateBodyStats (Valid): " + statResult);
+
+            // Test 2: History Snapshot Check
+            Member historyCheck = memberService.getMember(9406);
+            if (historyCheck.getStatsHistory().size() >= 1) {
+                System.out.println("Status: UC-3 Snapshot verified. History contains " + 
+                    historyCheck.getStatsHistory().size() + " record(s).");
+            }
+
+            // Test 3: Validation Check (Negative Height)
+            BodyStats invalidStats = new BodyStats(-1.0, 75.0, 18.0);
+            String validationResult = memberService.updateBodyStats(9406, invalidStats);
+            System.out.println("Status: updateBodyStats (Validation): " + validationResult);
+
+            // 6. TESTING UPDATE MEMBER
+            System.out.println("\n[STEP 5] Testing: Update Member Information...");
+            found.setAddress("Petaling Jaya");
+            String updateMsg = memberService.updateMember(found);
+            System.out.println("Status: updateMember: " + updateMsg);
+
+            // 7. TESTING PLAN CONSTRAINTS
+            System.out.println("\n[STEP 6] Testing: Plan Deletion Constraints...");
+            String deletePlanMsg = memberService.deleteMemberPlan("P-VIP");
+            System.out.println("Status: deleteMemberPlan (In Use Check): " + deletePlanMsg);
+
+            // 8. TESTING DELETE MEMBER
+            System.out.println("\n[STEP 7] Testing: Member Deletion...");
+            String deleteMsg = memberService.deleteMember(9406);
+            System.out.println("Status: deleteMember: " + deleteMsg);
+
+            System.out.println("\n--- [FINISH] All Integration Tests Completed ---");
+
+        } catch (Exception e) {
+            System.out.println("[FATAL ERROR] Integration test interrupted: " + e.getMessage());
             e.printStackTrace();
         }
 

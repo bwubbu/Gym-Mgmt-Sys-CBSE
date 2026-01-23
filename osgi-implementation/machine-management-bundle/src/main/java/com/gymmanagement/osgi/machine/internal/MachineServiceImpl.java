@@ -121,4 +121,12 @@ public class MachineServiceImpl implements IMachineService {
         }
         return stats;
     }
+
+    @Override
+    public void deleteAllMachines() {
+        if (this.machines != null) {
+            this.machines.clear();
+            System.out.println("[SERVICE] Machine memory cleared.");
+        }
+    }
 }

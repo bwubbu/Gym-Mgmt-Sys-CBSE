@@ -184,20 +184,39 @@ public class MemberService implements IMemberService {
 
         // Map Machine IDs to Names for the DTO
         List<String> machineDetails = new ArrayList<>();
+        // Inside MemberService.java -> getMemberProfile method
         if (member.getCurrentPlan() != null) {
             if (member.getCurrentPlan().isAccessAllMachines()) {
                 machineDetails.add("All Machines");
             } else {
                 List<Machine> allMachines = dataService.getAllMachines();
-                for (String mid : member.getCurrentPlan().getAccessibleMachineIds()) {
-                    String name = allMachines.stream()
-                            .filter(mac -> String.valueOf(mac.getRegId()).equals(mid))
-                            .map(Machine::getName)
-                            .findFirst().orElse("Unknown");
-                    machineDetails.add(mid + " (" + name + ")");
+                // FIX: Add null check for getAccessibleMachineIds()
+                List<String> ids = member.getCurrentPlan().getAccessibleMachineIds();
+                if (ids != null) {
+                    for (String mid : ids) {
+                        String name = allMachines.stream()
+                                .filter(mac -> String.valueOf(mac.getRegId()).equals(mid))
+                                .map(Machine::getName)
+                                .findFirst().orElse("Unknown");
+                        machineDetails.add(mid + " (" + name + ")");
+                    }
                 }
             }
         }
+        // if (member.getCurrentPlan() != null) {
+        //     if (member.getCurrentPlan().isAccessAllMachines()) {
+        //         machineDetails.add("All Machines");
+        //     } else {
+        //         List<Machine> allMachines = dataService.getAllMachines();
+        //         for (String mid : member.getCurrentPlan().getAccessibleMachineIds()) {
+        //             String name = allMachines.stream()
+        //                     .filter(mac -> String.valueOf(mac.getRegId()).equals(mid))
+        //                     .map(Machine::getName)
+        //                     .findFirst().orElse("Unknown");
+        //             machineDetails.add(mid + " (" + name + ")");
+        //         }
+        //     }
+        // }
         dto.setAccessibleMachineDetails(machineDetails);
 
         return dto;

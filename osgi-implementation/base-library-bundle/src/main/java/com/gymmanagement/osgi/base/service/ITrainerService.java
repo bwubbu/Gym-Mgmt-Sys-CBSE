@@ -63,5 +63,7 @@ public interface ITrainerService {
      * @return Success message
      */
     String updatePerformance(int trainerId, double rating, boolean attended);
+
+    void deleteAllTrainers();
 }
 

@@ -116,4 +116,12 @@ public class TrainerServiceImpl implements ITrainerService {
 
         return "Performance updated successfully";
     }
+
+    @Override
+    public void deleteAllTrainers() {
+        if (this.trainers != null) {
+            this.trainers.clear();
+            System.out.println("[SERVICE] Trainer memory cleared.");
+        }
+    }
 }

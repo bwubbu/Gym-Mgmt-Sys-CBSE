@@ -52,7 +52,10 @@ public class MemberManagementDemo {
         // memberService.getAllMembers().clear();
         // memberService.getAllMemberPlans().clear();
 
-        memberService.deleteAllData();
+        System.out.println("Performing Data Reset...");
+        memberService.deleteAllData();      // Wipes Members and Plans
+        machineService.deleteAllMachines(); // Wipes Machines
+        trainerService.deleteAllTrainers(); // Wipes Trainers
 
         // STEP 2: Seed Machines
         machineService.addMachine(new Machine(101, "Treadmill X1", "TechnoGym", "X1", 100, 50, "Cardio"));
@@ -60,12 +63,15 @@ public class MemberManagementDemo {
         machineService.addMachine(new Machine(103, "Leg Press Elite", "Life Fitness", "LP300", 250, 100, "Strength"));
 
         // STEP 3: Seed Trainers
-        trainerService.addTrainer(new Trainer(201, "Master Yoda", "yoda@gmail.com", "0123", "PJ", new Date(80,0,1), new Date(124,0,1), 900, "M", "Force", 50, 0, "Expert"));
-        trainerService.addTrainer(new Trainer(202, "Michael Tan", "michael@gmail.com", "0134", "KL", new Date(90,5,15), new Date(123,3,10), 850, "M", "Strength", 40, 5, "Advanced"));
+        trainerService.addTrainer(new Trainer(201, "Master Yoda", "yoda@gmail.com", "012-1234567", "PJ", new Date(80,0,1), new Date(124,0,1), 900, "M", "Force", 50, 0, "Expert"));
+        trainerService.addTrainer(new Trainer(202, "Michael Tan", "michael@gmail.com", "013-1234567", "KL", new Date(90,5,15), new Date(123,3,10), 850, "M", "Strength", 40, 5, "Advanced"));
+        trainerService.addTrainer(new Trainer(203, "Sarah Lim", "sarah@gmail.com", "014-1234567", "KL", new Date(90,5,15), new Date(123,3,10), 850, "F", "Strength", 40, 5, "Intermediate"));
 
         // STEP 4: Seed a Plan (Crucial for the Member Constructor)
-        MemberPlan vipPlan = new MemberPlan("VIP", "Exclusive VIP", "A", 999.0, "All Access", true, true, true, "101,102");
+        MemberPlan vipPlan = new MemberPlan("VIP", "Exclusive VIP", "Annually", 999.0, "All Access", true, true, true, "");
+        MemberPlan silverVipPlan = new MemberPlan("VIP-SILVER", "VIP Silver", "Quarterly", 599.0, "VIP Access", true, true, false, "101,102");
         memberService.addMemberPlan(vipPlan);
+        memberService.addMemberPlan(silverVipPlan);
 
         // STEP 5: Seed Member using the FULL CONSTRUCTOR
         Date joinDate = new Date(126, 0, 22); // 2026-01-22
@@ -85,7 +91,7 @@ public class MemberManagementDemo {
 
         memberService.addMember(member1);
 
-        System.out.println("✅ System Seeded: 3 Machines, 2 Trainers, 1 Plan, and Member 9406.");
+        System.out.println("✅ System Seeded: 3 Machines, 3 Trainers, 2 Plan, and 1 Member.");
     }
 
     // Helper to convert "2026-01-21" to your custom Date(1, 21, 2026)
